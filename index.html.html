@@ -1,0 +1,2112 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kingdom of Creatures Deluxe Online - Lobby Fix</title>
+  <style>
+    :root{--bg:#0b1020;--bg2:#111933;--panel:#151d37cc;--panel-solid:#171f3b;--panel-2:#24305a;--gold:#d8b46b;--gold2:#f0d89c;--text:#eef3ff;--muted:#a7b3d9;--danger:#f87171;--ok:#4ade80;--shadow:0 18px 50px rgba(0,0,0,.38)}
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;color:var(--text);background:radial-gradient(circle at top,#253870 0%,#0f1832 35%,#0b1020 70%),linear-gradient(180deg,#0b1020,#070a13);min-height:100vh}
+    input,select,button{font:inherit}.hidden{display:none!important}.start-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(circle at 15% 15%, rgba(255,255,255,.07), transparent 18%),radial-gradient(circle at 85% 10%, rgba(255,255,255,.05), transparent 20%),linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0))}
+    .start-card{width:min(1040px,100%);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.12);border-radius:32px;box-shadow:var(--shadow);overflow:hidden;display:grid;grid-template-columns:1.1fr .9fr;backdrop-filter: blur(12px)}
+    .hero{padding:34px;background:radial-gradient(circle at 20% 20%, rgba(216,180,107,.18), transparent 30%),radial-gradient(circle at 80% 30%, rgba(108,174,255,.14), transparent 25%)}
+    .hero h1{font-size:54px;line-height:.92;margin:8px 0 12px;letter-spacing:.6px}.hero p{color:var(--muted);line-height:1.55;max-width:520px}.hero-badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.chip{padding:10px 14px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);font-size:13px}
+    .wizard{padding:28px;background:rgba(7,10,19,.22)}.wizard h2{margin:0 0 8px;font-size:28px}.wizard p{margin:0 0 18px;color:var(--muted);line-height:1.45}.step{display:none}.step.active{display:block}
+    .big-input,.select,input,select{width:100%;padding:14px 16px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:#20294d;color:var(--text);outline:none}
+    .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}button{border:none;border-radius:16px;padding:14px 18px;cursor:pointer;font-weight:800;letter-spacing:.3px;color:#1d1405;background:linear-gradient(180deg,var(--gold2),var(--gold));transition:transform .12s ease, filter .12s ease}button:hover{transform:translateY(-1px);filter:brightness(1.03)}button:disabled{opacity:.5;cursor:not-allowed;transform:none}.secondary{background:#2a3563;color:var(--text)}.ghost{background:rgba(255,255,255,.05);color:var(--text);border:1px solid rgba(255,255,255,.09)}.danger{background:linear-gradient(180deg,#fb7185,#d9465f);color:#fff}
+    .option-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}.option{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);border-radius:20px;padding:18px;cursor:pointer;transition:transform .12s ease,border-color .12s ease, background .12s ease}.option:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.06)}.option h3{margin:0 0 6px;font-size:18px}.option p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}
+    .room-code{font-size:44px;font-weight:900;letter-spacing:10px;text-align:center;padding:16px;border-radius:22px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);margin:14px 0}.roster{display:grid;gap:10px;margin-top:14px}.roster-item{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)}.mini{font-size:12px;color:var(--muted)}
+    .app{display:none;grid-template-columns:380px 1fr;gap:18px;padding:18px;min-height:100vh}.app.show{display:grid}.panel{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.09);border-radius:26px;box-shadow:var(--shadow);overflow:hidden;backdrop-filter: blur(10px)}.sidebar{display:flex;flex-direction:column}.section{padding:18px 18px 14px;border-bottom:1px solid rgba(255,255,255,.07)}.section:last-child{border-bottom:none}.sidebar h1{margin:0;font-size:28px}.subtitle{color:var(--muted);font-size:13px;line-height:1.45;margin-top:6px}
+    .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:12px}.value{font-size:22px;font-weight:900}.small{font-size:12px;color:var(--muted)}.pill{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);padding:8px 10px;border-radius:999px;font-size:12px;margin:4px 6px 0 0}.dot{width:10px;height:10px;border-radius:50%}.banner{padding:12px 14px;border-radius:18px;background:linear-gradient(90deg, rgba(255,220,120,.14), rgba(120,180,255,.12));border:1px solid rgba(255,255,255,.1);font-size:13px;line-height:1.45;color:#f2f6ff}
+    #playersList{display:grid;gap:10px;max-height:300px;overflow:auto;padding-right:4px}.playerRow{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:10px}.playerMain{display:flex;align-items:center;gap:10px}.badge{padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.08);font-size:11px;color:#dce4ff}
+    .board-wrap{padding:14px;display:flex;flex-direction:column;gap:14px}.topbar{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.panelMini{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:10px 12px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}.board-area{position:relative;border-radius:26px;padding:12px;background:radial-gradient(circle at 20% 20%, rgba(255,255,255,.08), transparent 30%),linear-gradient(180deg, rgba(58,83,140,.38), rgba(16,20,38,.75));border:1px solid rgba(255,255,255,.08);min-height:760px;overflow:auto}svg{display:block;margin:auto}.hex{cursor:pointer;transition:transform .08s ease, filter .12s ease}.hex:hover{filter:brightness(1.08)}.hex.selected polygon{stroke:#fff7d7;stroke-width:4}.hex.reachable polygon{stroke:#9de0ff;stroke-width:3}.hex.attackable polygon{stroke:#ff9696;stroke-width:3}.hex.action polygon{stroke:#ffd86c;stroke-width:3}.hex text{pointer-events:none;user-select:none}.log{max-height:260px;overflow:auto;display:grid;gap:8px}.entry{background:rgba(255,255,255,.035);border-left:4px solid #5b6ba8;padding:10px 12px;border-radius:12px;font-size:13px;line-height:1.35;color:#e6ebff}.legend{display:flex;flex-wrap:wrap;gap:8px}.help{font-size:12px;color:var(--muted);line-height:1.45}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .turn-flash{animation:turnFlash .5s ease}.piece-anim{pointer-events:none;filter:drop-shadow(0 10px 18px rgba(0,0,0,.35));animation:fadeMove .7s ease forwards}.notice{margin-top:12px;padding:10px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);font-size:13px;line-height:1.4}.ok{color:#b9ffca}.warn{color:#ffdca8}.linkcode{font-weight:900;letter-spacing:6px}
+    @keyframes turnFlash{0%{transform:scale(.98);filter:brightness(.9)}100%{transform:scale(1);filter:brightness(1)}} @keyframes fadeMove{0%{opacity:0;transform:translateY(-4px)}15%{opacity:1}100%{opacity:0;transform:translateY(0)}}
+    .modal{position:fixed;inset:0;background:rgba(7,9,18,.72);display:none;align-items:center;justify-content:center;padding:16px;z-index:100}.modal.show{display:flex}.modal-card{max-width:720px;width:100%;background:#13182e;border:1px solid rgba(255,255,255,.12);border-radius:28px;box-shadow:var(--shadow);padding:22px}.modal-title{font-size:24px;font-weight:900;margin-bottom:8px}.result{font-size:18px;font-weight:800;padding:12px;border-radius:16px;background:rgba(255,255,255,.05);margin-top:10px}.footer-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+    @media (max-width: 1080px){.start-card,.app.show{grid-template-columns:1fr}.board-area{min-height:560px}.option-grid,.row{grid-template-columns:1fr}}
+  
+.endgame-card{max-width:640px;border:2px solid rgba(255,255,255,.18);box-shadow:0 18px 60px rgba(0,0,0,.45);background:linear-gradient(180deg,#182233,#0f1724)}
+.endgame-card.victory{background:linear-gradient(180deg,#17345d,#0f1724);border-color:rgba(99,179,255,.45)}
+.endgame-card.defeat{background:linear-gradient(180deg,#4a1e1e,#170f14);border-color:rgba(255,104,104,.38)}
+.endgame-badge{display:inline-block;margin:0 auto 10px;padding:10px 20px;border-radius:999px;font-weight:900;letter-spacing:1px;font-size:28px;border:2px solid rgba(255,255,255,.2)}
+.endgame-card.victory .endgame-badge{background:linear-gradient(180deg,#2e8cff,#165ab8);color:#fff6cf}
+.endgame-card.defeat .endgame-badge{background:linear-gradient(180deg,#e05555,#8f1d1d);color:#fff}
+.endgame-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:16px}
+.endgame-stat{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px}
+.endgame-stat b{display:block;font-size:22px;margin-top:6px}
+
+
+
+/* === Grafica migliorata: Kingdom polished theme === */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Inter:wght@400;600;700;800;900&display=swap');
+:root{
+  --bg:#080d19;--bg2:#101936;--panel:#121c36e8;--panel-solid:#141f3d;--panel-2:#26386a;
+  --gold:#c9973e;--gold2:#ffe7a4;--text:#f6f0df;--muted:#b6c3e4;
+  --danger:#ef4444;--ok:#55e28a;--shadow:0 24px 70px rgba(0,0,0,.48);
+  --line:rgba(255,255,255,.12);--magic:rgba(102,177,255,.18)
+}
+body{
+  font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255,215,128,.16), transparent 24%),
+    radial-gradient(circle at 85% 18%, rgba(93,164,255,.14), transparent 26%),
+    radial-gradient(circle at 50% 95%, rgba(67,204,128,.08), transparent 30%),
+    linear-gradient(180deg,#101936 0%,#080d19 62%,#050812 100%);
+}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:46px 46px;mask-image:radial-gradient(circle at center,black,transparent 80%)}
+.hero h1,.sidebar h1,h1{font-family:Cinzel,serif;text-shadow:0 4px 0 rgba(0,0,0,.35),0 0 28px rgba(255,211,115,.16)}
+.start-card,.panel,.modal-card{border:1px solid rgba(255,231,164,.18);box-shadow:var(--shadow), inset 0 1px 0 rgba(255,255,255,.08)}
+.start-card{background:linear-gradient(135deg,rgba(24,34,63,.94),rgba(8,12,24,.94));position:relative}
+.start-card:before{content:"";position:absolute;inset:10px;border:1px solid rgba(255,231,164,.10);border-radius:24px;pointer-events:none}
+.hero{background:radial-gradient(circle at 25% 22%, rgba(255,215,120,.22), transparent 31%),radial-gradient(circle at 78% 18%, rgba(87,164,255,.18), transparent 28%),linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0));position:relative;overflow:hidden}
+.hero:after{content:"🐍  🦅  🦠  🕷️  🦁  ⚔️";position:absolute;left:28px;bottom:22px;font-size:30px;letter-spacing:11px;opacity:.22;filter:drop-shadow(0 6px 12px #000)}
+.chip,.pill,.badge{box-shadow:inset 0 1px 0 rgba(255,255,255,.12)}
+.chip{background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border-color:rgba(255,231,164,.16)}
+button{background:linear-gradient(180deg,#fff0b8 0%,#d6a043 54%,#a76f1e 100%);border:1px solid rgba(255,240,184,.55);box-shadow:0 10px 24px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.35);text-transform:none}
+button:hover{transform:translateY(-2px);filter:brightness(1.06);box-shadow:0 14px 28px rgba(0,0,0,.42),0 0 18px rgba(255,214,111,.18)}
+.secondary,.ghost{background:linear-gradient(180deg,#344a7c,#1b274b);border:1px solid rgba(150,190,255,.18)}
+.danger{background:linear-gradient(180deg,#ff7b89,#b91c3b);border-color:rgba(255,180,190,.25)}
+.big-input,.select,input,select{background:linear-gradient(180deg,#26365f,#141d38);border:1px solid rgba(255,231,164,.14);box-shadow:inset 0 2px 10px rgba(0,0,0,.18)}
+.option{background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.025));border-color:rgba(255,231,164,.14);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.option:hover{border-color:rgba(255,231,164,.35);box-shadow:0 12px 28px rgba(0,0,0,.25)}
+.room-code{font-family:Cinzel,serif;background:linear-gradient(180deg,rgba(255,231,164,.13),rgba(255,255,255,.04));border-color:rgba(255,231,164,.24);color:#ffe7a4;text-shadow:0 0 18px rgba(255,214,111,.35)}
+.app{background:linear-gradient(135deg,rgba(255,255,255,.02),rgba(255,255,255,0));}
+.sidebar{background:linear-gradient(180deg,rgba(21,31,61,.92),rgba(8,12,24,.92))}
+.section{border-bottom-color:rgba(255,231,164,.10)}
+.card,.panelMini,.playerRow,.entry,.notice{background:linear-gradient(180deg,rgba(255,255,255,.065),rgba(255,255,255,.025));border-color:rgba(255,255,255,.10)}
+.value{color:#ffe7a4;text-shadow:0 0 16px rgba(255,214,111,.18)}
+.banner{background:linear-gradient(90deg,rgba(255,215,120,.18),rgba(94,165,255,.14),rgba(92,230,160,.10));border-color:rgba(255,231,164,.16)}
+.board-area{background:radial-gradient(circle at 22% 20%,rgba(255,255,255,.10),transparent 24%),radial-gradient(circle at 72% 68%,rgba(83,147,255,.12),transparent 30%),linear-gradient(180deg,rgba(45,68,116,.58),rgba(11,16,32,.88));border:1px solid rgba(255,231,164,.16);box-shadow:inset 0 0 60px rgba(0,0,0,.32)}
+.hex polygon{filter:drop-shadow(0 5px 4px rgba(0,0,0,.20));transition:filter .16s ease, stroke-width .12s ease}
+.hex:hover polygon{stroke:rgba(255,231,164,.60)!important;stroke-width:3!important;filter:brightness(1.12) drop-shadow(0 7px 8px rgba(0,0,0,.28))}
+.hex.selected polygon{stroke:#ffe7a4!important;stroke-width:5!important;filter:drop-shadow(0 0 14px rgba(255,231,164,.55))}
+.hex.reachable polygon{stroke:#8fd8ff!important;filter:drop-shadow(0 0 10px rgba(143,216,255,.35))}
+.hex.attackable polygon{stroke:#ff8484!important;filter:drop-shadow(0 0 12px rgba(255,132,132,.38))}
+.hex.action polygon{stroke:#ffdb70!important;filter:drop-shadow(0 0 12px rgba(255,219,112,.40))}
+.log::-webkit-scrollbar,#playersList::-webkit-scrollbar,.board-area::-webkit-scrollbar{width:10px;height:10px}.log::-webkit-scrollbar-thumb,#playersList::-webkit-scrollbar-thumb,.board-area::-webkit-scrollbar-thumb{background:#3c4d7d;border-radius:999px}.board-area::-webkit-scrollbar-track{background:#11182d}
+.endgame-card.victory{background:radial-gradient(circle at top,rgba(255,231,164,.22),transparent 34%),linear-gradient(180deg,#17345d,#08101f);border-color:rgba(255,231,164,.34)}
+.endgame-card.defeat{background:radial-gradient(circle at top,rgba(255,100,100,.20),transparent 34%),linear-gradient(180deg,#4a1e1e,#120812);border-color:rgba(255,104,104,.38)}
+@media (max-width:1080px){.hero h1{font-size:42px}.app{padding:10px}.sidebar{max-height:none}}
+
+
+/* Duel dice upgrade */
+.duel-roll-card{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
+.duel-side{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:14px}
+.duel-side h3{margin:0 0 8px;font-size:16px}
+.dice-row{display:flex;gap:8px;flex-wrap:wrap;min-height:58px;align-items:center;margin-top:10px}
+.die{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;background:linear-gradient(180deg,#fff7df,#d9b86a);color:#201405;box-shadow:0 8px 18px rgba(0,0,0,.35);border:2px solid rgba(255,255,255,.55)}
+.die.rolling{animation:diceShake .12s linear infinite}
+.duel-total{font-size:24px;font-weight:900;color:var(--gold2);margin-top:8px}
+.duel-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+#rollDuelBtn{min-width:130px;text-transform:uppercase}
+@keyframes diceShake{0%{transform:rotate(-8deg) translateY(-1px)}50%{transform:rotate(8deg) translateY(1px)}100%{transform:rotate(-8deg) translateY(-1px)}}
+@media(max-width:700px){.duel-roll-card{grid-template-columns:1fr}.die{width:42px;height:42px;font-size:23px}}
+
+.duel-timer{margin-top:10px;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.12);font-weight:800;color:#ffe7a8}
+.duel-wait{font-size:13px;color:var(--muted);margin-top:8px}
+.duel-ready{color:#b9ffca;font-weight:900}
+.duel-pending{color:#ffdca8;font-weight:900}
+
+
+
+/* Creature assignment reveal */
+.creature-reveal-overlay{
+  position:fixed; inset:0; z-index:250;
+  display:none; align-items:center; justify-content:center;
+  background:radial-gradient(circle at top, rgba(240,216,156,.18), transparent 28%),
+             radial-gradient(circle at bottom, rgba(79,195,247,.14), transparent 35%),
+             rgba(5,8,18,.92);
+  padding:20px;
+}
+.creature-reveal-overlay.show{display:flex}
+.creature-reveal-card{
+  width:min(720px,96vw);
+  border-radius:34px;
+  border:1px solid rgba(255,255,255,.18);
+  background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.035));
+  box-shadow:0 25px 90px rgba(0,0,0,.55);
+  padding:28px;
+  text-align:center;
+  backdrop-filter:blur(14px);
+}
+.creature-reveal-title{font-size:28px;font-weight:900;color:var(--gold2);margin-bottom:6px}
+.creature-reveal-sub{color:var(--muted);margin-bottom:20px}
+.creature-orb{
+  width:190px;height:190px;border-radius:50%;
+  margin:0 auto 18px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:88px;
+  background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.55),rgba(255,255,255,.12) 35%,rgba(255,255,255,.04) 70%);
+  border:3px solid rgba(255,255,255,.22);
+  box-shadow:0 0 42px rgba(240,216,156,.18), inset 0 0 28px rgba(255,255,255,.12);
+}
+.creature-orb.spinning{animation:creatureSpin .12s linear infinite, pulseOrb .8s ease-in-out infinite alternate}
+.reveal-name{font-size:36px;font-weight:1000;margin:8px 0 6px}
+.reveal-rule{color:#dbe6ff;line-height:1.45;max-width:560px;margin:0 auto}
+.reveal-order{margin-top:18px;text-align:left;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);border-radius:18px;padding:14px}
+.reveal-order div{padding:6px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.reveal-order div:last-child{border-bottom:0}
+@keyframes creatureSpin{0%{transform:rotate(-8deg) scale(.98)}50%{transform:rotate(8deg) scale(1.03)}100%{transform:rotate(-8deg) scale(.98)}}
+@keyframes pulseOrb{from{filter:brightness(.95)}to{filter:brightness(1.25)}}
+
+
+/* Aracnidi poison revenge */
+.poison-card{
+  background:linear-gradient(180deg,rgba(192,132,252,.18),rgba(30,18,45,.82));
+  border:1px solid rgba(192,132,252,.45);
+}
+.poison-title{font-size:26px;font-weight:1000;color:#e9d5ff;margin-bottom:8px}
+.poison-text{line-height:1.45;color:#f4eaff}
+.poison-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+
+
+/* Animazione fusione pedine */
+.merge-aura{
+  pointer-events:none;
+  filter:drop-shadow(0 0 18px rgba(255,216,108,.85));
+  animation:mergeAuraPulse 1s ease-out forwards;
+}
+@keyframes mergeAuraPulse{
+  0%{opacity:0;transform:scale(.35)}
+  18%{opacity:1;transform:scale(1)}
+  65%{opacity:.95;transform:scale(1.35)}
+  100%{opacity:0;transform:scale(1.85)}
+}
+
+
+/* Aura fusione diretta sopra la mappa */
+.board-area{position:relative}
+.merge-aura-dom{
+  position:absolute;
+  width:92px;height:92px;
+  border-radius:50%;
+  border:5px solid #ffd86c;
+  background:radial-gradient(circle, rgba(255,232,120,.42), rgba(255,216,108,.08) 55%, transparent 70%);
+  box-shadow:0 0 28px rgba(255,216,108,.95), inset 0 0 22px rgba(255,255,210,.7);
+  pointer-events:none;
+  transform:translate(-50%,-50%) scale(.25);
+  opacity:0;
+  z-index:20;
+  animation:mergeAuraDom 1s ease-out forwards;
+}
+.merge-aura-dom::after{
+  content:"✨";
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:34px;
+}
+@keyframes mergeAuraDom{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.25)}
+  15%{opacity:1;transform:translate(-50%,-50%) scale(.85)}
+  65%{opacity:1;transform:translate(-50%,-50%) scale(1.22)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(1.75)}
+}
+
+
+/* Duello veleno aracnidi */
+.poison-dice-box{
+  margin-top:14px;
+  display:grid;
+  gap:12px;
+}
+.poison-dice-row{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  min-height:56px;
+  align-items:center;
+}
+.poison-die{
+  width:48px;height:48px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;font-weight:900;
+  background:linear-gradient(180deg,#f3e8ff,#a855f7);
+  color:#1b1025;
+  box-shadow:0 8px 18px rgba(0,0,0,.35),0 0 18px rgba(168,85,247,.45);
+  border:2px solid rgba(255,255,255,.55);
+}
+.poison-die.rolling{animation:diceShake .12s linear infinite}
+.poison-total{font-size:22px;font-weight:900;color:#e9d5ff}
+
+
+/* Duello stile Preview 52 */
+.duel52-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
+.duel52-side{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:14px}
+.duel52-dice{display:flex;gap:8px;flex-wrap:wrap;min-height:56px;align-items:center;margin-top:10px}
+.duel52-die{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;background:linear-gradient(180deg,#fff7df,#d9b86a);color:#201405;box-shadow:0 8px 18px rgba(0,0,0,.35);border:2px solid rgba(255,255,255,.55)}
+.duel52-die.rolling{animation:diceShake .12s linear infinite}
+.duel52-total{font-size:22px;font-weight:900;color:var(--gold2);margin-top:8px}
+.duel52-timer{margin-top:10px;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.12);font-weight:800;color:#ffe7a8}
+.duel52-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+@keyframes diceShake{0%{transform:rotate(-8deg) translateY(-1px)}50%{transform:rotate(8deg) translateY(1px)}100%{transform:rotate(-8deg) translateY(-1px)}}
+@media(max-width:700px){.duel52-grid{grid-template-columns:1fr}.duel52-die{width:42px;height:42px;font-size:23px}}
+
+
+
+/* === Finestra istruzioni iniziali === */
+.instructions-modal{z-index:300;background:rgba(5,8,18,.86);backdrop-filter:blur(8px)}
+.instructions-card{max-width:860px;max-height:86vh;display:flex;flex-direction:column;padding:0;overflow:hidden}
+.instructions-head{padding:22px 24px;border-bottom:1px solid rgba(255,231,164,.14);background:linear-gradient(180deg,rgba(255,231,164,.10),rgba(255,255,255,.02))}
+.instructions-head .modal-title{margin:0;font-size:30px;color:var(--gold2)}
+.instructions-scroll{overflow:auto;padding:20px 24px 24px;line-height:1.55;color:#edf3ff}
+.instructions-scroll h3{margin:18px 0 8px;color:#ffe7a4}
+.instructions-scroll ul{margin:8px 0 0 20px;padding:0}
+.instructions-scroll li{margin:6px 0}
+.instructions-scroll .instruction-note{margin-top:18px;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.10)}
+.instructions-close-row{margin-top:22px;display:flex;justify-content:flex-end}
+#instructionsBtn{margin-top:12px}
+
+
+/* === Audio e pannello impostazioni === */
+.settings-fab{
+  position:fixed;right:18px;bottom:18px;z-index:220;
+  width:58px;height:58px;border-radius:50%;padding:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:27px;color:#1d1405;
+}
+.settings-fab:hover{transform:translateY(-2px) rotate(18deg)}
+.settings-card{max-width:720px}
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.setting-box{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.11);border-radius:18px;padding:14px}
+.setting-box h3{margin:0 0 8px;color:var(--gold2);font-size:16px}
+.setting-line{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0}
+.setting-line label{font-weight:800}
+.setting-line input[type=checkbox]{width:22px;height:22px;accent-color:#d8b46b}
+.setting-line input[type=range]{width:100%;accent-color:#d8b46b}
+.audio-note{font-size:12px;color:var(--muted);line-height:1.45;margin-top:10px}
+@media(max-width:700px){.settings-grid{grid-template-columns:1fr}.settings-fab{right:12px;bottom:12px}}
+
+</style>
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+</head>
+<body>
+<div class="start-screen" id="startScreen">
+  <div class="start-card">
+    <div class="hero">
+      <div class="chip">KINGDOM OF CREATURES</div>
+      <h1>CREA IL TUO NOME.<br>ENTRA IN UN GRUPPO.<br>CONQUISTA IL REGNO.</h1>
+      <p>Versione online stanza host/join: il creatore avvia la partita e tutti i dispositivi vengono portati automaticamente nella mappa. Quando una pedina si muove o il turno cambia, tutti vedono subito l'aggiornamento.</p>
+      <div class="hero-badges">
+        <div class="chip">2-6 giocatori</div><div class="chip">Codice a 4 cifre</div><div class="chip">Lobby sincronizzata</div><div class="chip">Mosse live</div>
+      </div>
+      <div class="notice warn">Questa modalità usa una connessione online peer-to-peer. Funziona anche tra Wi‑Fi diversi se le reti permettono WebRTC; con reti molto bloccate può servire un server TURN.</div>
+    </div>
+    <div class="wizard">
+      <div class="step active" id="stepName"><h2>1. Scegli il tuo nome</h2><p>Prima scrivi il tuo nome. Sarà visibile a tutti nella lobby e nella partita.</p><input id="myNameInput" class="big-input" maxlength="18" placeholder="Scrivi il tuo nome" /><div class="actions"><button id="continueNameBtn">Continua</button><button class="secondary" id="instructionsBtn" type="button">Le istruzioni</button></div></div>
+      <div class="step" id="stepMode"><h2>2. Crea o entra</h2><p>Ciao <span id="helloName"></span>. Adesso scegli se vuoi creare una nuova partita o entrare in un gruppo con un codice di 4 cifre.</p><div class="option-grid"><div class="option" id="chooseCreate"><h3>➕ Crea una partita</h3><p>Diventi host della stanza e avvii la mappa per tutti.</p></div><div class="option" id="chooseJoin"><h3>🔑 Entra in un gruppo</h3><p>Inserisci il codice di 4 cifre ricevuto dall'host.</p></div></div><div class="actions"><button class="secondary" id="backToNameBtn">Indietro</button></div></div>
+      <div class="step" id="stepCreate"><h2>3. Crea la partita</h2><p>Imposta giocatori e mappa. Verrà generato un codice stanza di 4 cifre.</p><div class="row"><div><div class="mini" style="margin:0 0 6px">Giocatori</div><select id="playerCount"><option>2</option><option>3</option><option>4</option><option selected>5</option><option>6</option></select></div><div><div class="mini" style="margin:0 0 6px">Dimensione mappa</div><select id="mapSize"><option value="small">Piccola</option><option value="medium" selected>Media</option><option value="large">Grande</option></select></div></div><div class="actions"><button id="createRoomBtn">Crea partita</button><button class="secondary" id="backToModeFromCreate">Indietro</button></div><div class="notice" id="networkCreateStatus">Connessione stanza non ancora avviata.</div></div>
+      <div class="step" id="stepJoin"><h2>3. Entra con codice</h2><p>Inserisci il codice a 4 cifre della partita.</p><input id="joinCodeInput" class="big-input" maxlength="4" inputmode="numeric" placeholder="0000" /><div class="actions"><button id="joinRoomBtn">Entra</button><button class="secondary" id="backToModeFromJoin">Indietro</button></div><div class="notice" id="networkJoinStatus">Aspetto il codice stanza.</div></div>
+      <div class="step" id="stepLobby"><h2>Lobby</h2><p>Codice della partita:</p><div class="room-code" id="roomCodeBox">0000</div><div class="actions"><button class="secondary" id="copyRoomCodeBtn">Copia codice</button><button id="startMatchBtn">Inizia partita</button></div><div class="mini" style="margin-top:12px">Giocatori visibili nella lobby:</div><div class="roster" id="lobbyRoster"></div><div class="notice" id="lobbyStatus">Sto preparando la stanza...</div><div class="actions"><button class="secondary" id="backToModeFromLobby">Indietro</button></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="app" id="app">
+  <div class="panel sidebar">
+    <div class="section"><h1>Kingdom of Creatures</h1><div class="subtitle">Versione online: host e giocatori vedono in diretta avvio partita, mosse, turni e stato della mappa.</div></div>
+    <div class="section"><div class="small" style="margin-bottom:10px">Azioni rapide</div><div class="row"><button class="ghost" id="spawnBtn">Usa 1 gemma e spawna</button><button class="ghost" id="mergeBtn">Unisci 2 pedine</button></div><div class="row" style="margin-top:10px"><button class="ghost" id="newHutBtn">Nuova capanna (3 Gemme)</button><button class="ghost" id="humanSkillBtn">Rinforzi</button></div><div class="row" style="margin-top:10px"><button class="danger" id="endTurnBtn">Passa turno</button></div><div class="help" style="margin-top:10px">Premi <b>+ Creatura (1 Gemma)</b> per spendere 1 gemma e creare una nuova pedina vicino a una tua capanna. Premi <b>Nuova capanna (3 Gemme)</b> per spendere 3 gemme e creare una nuova capanna accanto a una tua capanna esistente. Ogni capanna produce 1 gemma ogni 3 tuoi turni. Premi <b>Unisci 2 pedine</b>, poi clicca una tua pedina dello stesso livello accanto a quella selezionata: resterà una sola pedina di livello superiore, che in battaglia lancia tanti dadi quanto il suo livello, fino al livello 3.</div></div>
+    <div class="section"><div class="banner" id="currentBanner">Avvia la partita dalla lobby.</div></div>
+    <div class="section"><div class="small" style="margin-bottom:10px">Giocatori</div><div id="playersList"></div></div>
+    <div class="section"><div class="card"><div class="small">Codice stanza</div><div class="value" id="liveRoomCode" style="letter-spacing:4px">0000</div><div class="small" id="livePlayerName">Nome: —</div><div class="small" id="liveRole">Ruolo: —</div></div></div>
+    <div class="section"><div class="stats"><div class="card"><div class="small">Turno globale</div><div class="value" id="turnCounter">0</div></div><div class="card"><div class="small">Fase</div><div class="value" id="phaseLabel" style="font-size:20px">Giorno</div></div><div class="card"><div class="small">Le tue gemme</div><div class="value" id="myGemCounter">0</div></div></div></div>
+    <div class="section"><div class="small" style="margin-bottom:10px">Registro eventi</div><div class="log" id="log"></div></div>
+  </div>
+  <div class="panel board-wrap"><div class="topbar"><div class="panelMini" id="turnInfo"></div><div class="legend" id="legend"></div></div><div class="board-area"><svg id="boardSvg" width="1400" height="900"></svg></div></div>
+</div>
+
+
+
+
+
+
+<button class="settings-fab" id="settingsBtn" type="button" title="Impostazioni audio">⚙️</button>
+
+<div class="modal" id="settingsModal">
+  <div class="modal-card settings-card">
+    <div class="modal-title">Impostazioni audio</div>
+    <div class="small">Qui puoi modificare musica di sottofondo, volume, effetti sonori e atmosfera giorno/notte.</div>
+    <div class="settings-grid">
+      <div class="setting-box">
+        <h3>🎵 Musica</h3>
+        <div class="setting-line"><label for="musicEnabledToggle">Musica attiva</label><input id="musicEnabledToggle" type="checkbox" checked></div>
+        <div class="setting-line" style="display:block"><label for="musicVolumeRange">Volume musica</label><input id="musicVolumeRange" type="range" min="0" max="100" value="35"></div>
+        <div class="setting-line"><label for="dayNightMusicToggle">Musica diversa giorno/notte</label><input id="dayNightMusicToggle" type="checkbox" checked></div>
+        <div class="setting-line"><label for="fadeMusicToggle">Dissolvenza elegante</label><input id="fadeMusicToggle" type="checkbox" checked></div>
+      </div>
+      <div class="setting-box">
+        <h3>⚔️ Effetti</h3>
+        <div class="setting-line"><label for="sfxEnabledToggle">Effetti sonori attivi</label><input id="sfxEnabledToggle" type="checkbox" checked></div>
+        <div class="setting-line" style="display:block"><label for="sfxVolumeRange">Volume effetti</label><input id="sfxVolumeRange" type="range" min="0" max="100" value="55"></div>
+        <div class="actions"><button class="secondary" id="testAudioBtn" type="button">Prova audio</button></div>
+        <div class="audio-note">La musica è generata dal gioco: non serve scaricare file MP3. Su alcuni browser parte dopo il primo click del giocatore.</div>
+      </div>
+    </div>
+    <div class="footer-actions"><button class="secondary" id="closeSettingsBtn" type="button">Chiudi</button></div>
+  </div>
+</div>
+
+<div class="modal instructions-modal" id="instructionsModal">
+  <div class="modal-card instructions-card">
+    <div class="instructions-head">
+      <div class="modal-title">Istruzioni del gioco</div>
+      <div class="small">Leggi fino in fondo e poi premi Chiudi per tornare alla pagina del nome.</div>
+    </div>
+    <div class="instructions-scroll">
+      <h3>Obiettivo</h3>
+      <p>Conquista il regno eliminando gli avversari e controllando la mappa con capanne, creature e gemme.</p>
+
+      <h3>Inizio partita</h3>
+      <ul>
+        <li>Scrivi il tuo nome.</li>
+        <li>Crea una partita oppure entra con il codice a 4 cifre.</li>
+        <li>L’host avvia la partita e le creature vengono assegnate casualmente.</li>
+      </ul>
+
+      <h3>Turni</h3>
+      <ul>
+        <li>Ogni giocatore muove durante il proprio turno.</li>
+        <li>Puoi muovere creature, attaccare, creare nuove creature, unire pedine o costruire capanne.</li>
+        <li>Quando hai finito, premi Passa turno.</li>
+      </ul>
+
+      <h3>Gemme e capanne</h3>
+      <ul>
+        <li>Le gemme servono per creare creature e nuove capanne.</li>
+        <li>Ogni capanna produce gemme durante la partita.</li>
+        <li>Una nuova capanna costa 3 gemme.</li>
+      </ul>
+
+      <h3>Creature e livelli</h3>
+      <ul>
+        <li>Le creature possono essere unite con un’altra creatura dello stesso livello.</li>
+        <li>Unendo 2 pedine, ne rimane una sola di livello superiore.</li>
+        <li>Il livello massimo è 3.</li>
+      </ul>
+
+      <h3>Combattimenti</h3>
+      <ul>
+        <li>Quando attacchi una creatura nemica, si apre il duello.</li>
+        <li>Ogni creatura tira dadi in base al proprio livello.</li>
+        <li>Chi fa il punteggio più alto vince. In caso di pareggio vince il difensore.</li>
+      </ul>
+
+      <h3>Veleno degli Aracnidi</h3>
+      <ul>
+        <li>Il veleno si può usare solo quando una creatura Aracnide muore e appare la finestra del veleno.</li>
+        <li>Il veleno tira dadi speciali da 1 a 3.</li>
+        <li>Livello 1: tira 1 dado da 1 a 3.</li>
+        <li>Livello 2: tira 2 dadi da 1 a 3.</li>
+        <li>Livello 3: tira 3 dadi da 1 a 3.</li>
+        <li>I punti dei dadi veleno si sommano subito nella finestra del veleno.</li>
+      </ul>
+
+      <h3>Vittoria</h3>
+      <p>Vince chi resta in gioco e riesce a dominare il regno eliminando gli avversari.</p>
+
+      <div class="instruction-note">
+        Suggerimento: leggi sempre il registro eventi e controlla di chi è il turno prima di muovere o attaccare.
+      </div>
+
+      <div class="instructions-close-row">
+        <button id="closeInstructionsBtn" type="button">Chiudi</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="creature-reveal-overlay" id="creatureReveal">
+  <div class="creature-reveal-card">
+    <div class="creature-reveal-title">Assegnazione creature</div>
+    <div class="creature-reveal-sub" id="revealSub">Le creature vengono scelte casualmente.</div>
+    <div class="creature-orb spinning" id="revealOrb">🎲</div>
+    <div class="reveal-name" id="revealName">Preparati...</div>
+    <div class="reveal-rule" id="revealRule">L’ordine dei turni parte dall’host e segue l’ordine di entrata.</div>
+    <div class="reveal-order" id="revealOrder"></div>
+  </div>
+</div>
+
+
+<div class="modal" id="poisonModal">
+  <div class="modal-card poison-card">
+    <div class="poison-title">Duello del veleno degli Aracnidi</div>
+    <div class="poison-text" id="poisonBody">Avvelena la creatura che ti ha ucciso.</div>
+    <div class="poison-dice-box">
+      <div class="small">Tira solo con il veleno. La creatura bersaglio tirerà automaticamente i suoi dadi per resistere.</div>
+      <div class="poison-dice-row" id="poisonDiceRow"></div>
+      <div class="poison-total" id="poisonTotal">Totale veleno: —</div>
+      <div class="poison-total" id="poisonDefTotal">Resistenza nemica: —</div>
+      <div class="result" id="poisonResult">Premi TIRA VELENO.</div>
+    </div>
+    <div class="poison-actions">
+      <button id="closePoisonBtn">Chiudi</button>
+      <button class="secondary" id="skipPoisonBtn">Non usare</button>
+      <button id="usePoisonBtn">TIRA VELENO</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="modal" id="combatModal">
+  <div class="modal-card">
+    <div class="modal-title">Duello</div>
+    <div id="combatBody"></div>
+    <div class="duel52-actions">
+      <button class="secondary" id="closeCombat">Chiudi</button>
+      <button id="rollDuelBtn">TIRA</button>
+    </div>
+  </div>
+</div>
+</div>
+<div class="modal" id="winnerModal"><div class="modal-card endgame-card" id="endgameCard"><div class="endgame-badge" id="endgameBadge">VITTORIA</div><div class="modal-title" id="endgameTitle">Hai conquistato il regno!</div><div class="result" id="winnerText"></div><div class="endgame-stats" id="endgameStats"></div><div class="footer-actions"><button class="secondary" id="backToLobbyBtn">Torna alla lobby</button><button id="playAgain">Gioca di nuovo</button></div></div></div>
+
+<script>
+(() => {
+  const CREATURES = [
+    { id:'reptiles', name:'Rettili', short:'R', color:'#2ecc71', territory:'rgba(46,204,113,.22)', move:2, icon:'🐍', rule:'Fanno 2 passi quando si muovono e possono attaccare tutti i nemici, anche i Volatili.' },
+    { id:'birds', name:'Volatili', short:'V', color:'#4fc3f7', territory:'rgba(79,195,247,.22)', move:1, icon:'🦅', rule:'In aria non possono essere attaccati dai non volatili.' },
+    { id:'slime', name:'Slime-virus', short:'S', color:'#7cf36f', territory:'rgba(124,243,111,.22)', move:1, icon:'🟢', rule:'Se vince, contagia per 3 turni invece di uccidere.' },
+    { id:'spiders', name:'Aracnidi', short:'A', color:'#c084fc', territory:'rgba(192,132,252,.22)', move:1, icon:'🕷️', rule:'Se muore attaccando, il veleno può uccidere dopo 2 turni.' },
+    { id:'anthro', name:'Antropofiere', short:'N', color:'#f59e0b', territory:'rgba(245,158,11,.22)', move:1, icon:'🦁', rule:'Di notte le creature notturne non le attaccano e le Antropofiere non possono attaccare le creature notturne.' },
+    { id:'humans', name:'Umani', short:'U', color:'#e5e7eb', territory:'rgba(229,231,235,.2)', move:1, icon:'🧍‍♂️⚔️', rule:'Rinforzi utilizzabili 2 volte in tutta la partita.' },
+  ];
+  const NIGHT_CREATURE_ICON = '🧟';
+  const DAY_TURNS = 10;
+  const NIGHT_TURNS = 5;
+  const state = { board: [], rows:0, cols:0, players: [], currentPlayerIndex:0, turn:0, cycle:0, isNight:false, phaseTurns:0, phaseTurns:0, selectedHex:null, mode:null, gameStarted:false, pendingPoisons: [], spiderPoisonQueue: [], activePoison:null, winner:null, roomCode:'0000', localPlayerName:'', mapSize:'medium', playerCount:5, logs:[], combatInfo:null, pendingDuel:null, actionSerial:0, lastAnimation:null, mergeAnimation:null, lastPoisonResult:null };
+  const network = { peer:null, role:null, roomCode:'', hostPeerId:'', connections:{}, clientConn:null, peers:[], myPeerId:'', connected:false };
+  const el=id=>document.getElementById(id), svg=el('boardSvg'), ns='http://www.w3.org/2000/svg';
+  const audioSettings = { music:true, sfx:true, musicVolume:.35, sfxVolume:.55, dayNight:true, fade:true };
+  const savedAudioSettings = localStorage.getItem('kocAudioSettings');
+  if(savedAudioSettings){ try{ Object.assign(audioSettings, JSON.parse(savedAudioSettings)); }catch(e){} }
+  const audioEngine = { ctx:null, master:null, musicGain:null, sfxGain:null, musicTimer:null, step:0, currentTheme:'day' };
+
+  function saveAudioSettings(){ localStorage.setItem('kocAudioSettings', JSON.stringify(audioSettings)); }
+  function initAudioEngine(){
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if(!AC) return null;
+    if(!audioEngine.ctx){
+      const ctx = new AC();
+      audioEngine.ctx = ctx;
+      audioEngine.master = ctx.createGain();
+      audioEngine.musicGain = ctx.createGain();
+      audioEngine.sfxGain = ctx.createGain();
+      audioEngine.master.gain.value = 1;
+      audioEngine.musicGain.gain.value = audioSettings.music ? audioSettings.musicVolume : 0;
+      audioEngine.sfxGain.gain.value = audioSettings.sfx ? audioSettings.sfxVolume : 0;
+      audioEngine.musicGain.connect(audioEngine.master);
+      audioEngine.sfxGain.connect(audioEngine.master);
+      audioEngine.master.connect(ctx.destination);
+    }
+    if(audioEngine.ctx.state === 'suspended') audioEngine.ctx.resume();
+    return audioEngine.ctx;
+  }
+  function setGainSmooth(gain, value, seconds=.6){
+    if(!gain || !audioEngine.ctx) return;
+    const now = audioEngine.ctx.currentTime;
+    gain.gain.cancelScheduledValues(now);
+    gain.gain.setValueAtTime(gain.gain.value, now);
+    if(audioSettings.fade) gain.gain.linearRampToValueAtTime(value, now + seconds);
+    else gain.gain.setValueAtTime(value, now);
+  }
+  function playTone(freq, start, dur, gain=.08, type='sine', target='music'){
+    const ctx = initAudioEngine(); if(!ctx) return;
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = type; osc.frequency.setValueAtTime(freq, start);
+    g.gain.setValueAtTime(0.0001, start);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.0002,gain), start + .03);
+    g.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+    osc.connect(g); g.connect(target === 'sfx' ? audioEngine.sfxGain : audioEngine.musicGain);
+    osc.start(start); osc.stop(start + dur + .05);
+  }
+  function playNoise(start, dur, gain=.09){
+    const ctx = initAudioEngine(); if(!ctx) return;
+    const buffer = ctx.createBuffer(1, Math.max(1, ctx.sampleRate*dur), ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for(let i=0;i<data.length;i++) data[i] = (Math.random()*2-1) * Math.pow(1-i/data.length,2);
+    const src = ctx.createBufferSource(); const g=ctx.createGain();
+    src.buffer = buffer; g.gain.value = gain; src.connect(g); g.connect(audioEngine.sfxGain); src.start(start);
+  }
+  function musicTick(){
+    const ctx = audioEngine.ctx; if(!ctx) return;
+    const theme = audioSettings.dayNight && state.isNight ? 'night' : 'day';
+    audioEngine.currentTheme = theme;
+    const now = ctx.currentTime;
+
+    // Musica medievale procedurale: bordone, liuto, campane leggere e ritmo da marcia.
+    // Non usa file esterni: resta tutto generato dal browser con Web Audio API.
+    const dayMelody = [293.66,349.23,392.00,440.00,392.00,349.23,329.63,293.66,261.63,293.66,329.63,349.23,392.00,349.23,293.66,246.94];
+    const nightMelody = [220.00,261.63,293.66,329.63,293.66,261.63,246.94,220.00,196.00,220.00,246.94,261.63,293.66,261.63,220.00,174.61];
+    const melody = theme === 'night' ? nightMelody : dayMelody;
+    const i = audioEngine.step++ % melody.length;
+    const note = melody[i];
+    const next = melody[(i + 2) % melody.length];
+    const root = theme === 'night' ? 110.00 : 146.83;
+    const fifth = root * 1.5;
+    const melodyGain = theme === 'night' ? .043 : .052;
+
+    // Bordone grave tipo ghironda/cornamusa medievale.
+    playTone(root, now, 1.35, theme === 'night' ? .030 : .034, 'triangle', 'music');
+    if(i % 2 === 0) playTone(fifth, now + .02, 1.05, .017, 'sine', 'music');
+
+    // Frase principale pizzicata tipo liuto.
+    playTone(note, now + .02, .34, melodyGain, 'triangle', 'music');
+    playTone(note * 2, now + .03, .18, melodyGain * .34, 'sine', 'music');
+    if(i % 2 === 1) playTone(next, now + .28, .25, melodyGain * .62, 'triangle', 'music');
+
+    // Accenti di taverna/marcia: tamburo morbido e campanelli.
+    if(i % 4 === 0){
+      playTone(73.42, now, .16, .050, 'sine', 'music');
+      playTone(note * 3, now + .10, .22, .014, 'sine', 'music');
+    }
+    if(i % 8 === 6){
+      playTone(880.00, now + .12, .18, .012, 'sine', 'music');
+      playTone(1174.66, now + .25, .16, .010, 'sine', 'music');
+    }
+  }
+  function startKingdomMusic(){
+    initAudioEngine();
+    if(!audioEngine.ctx) return;
+    setGainSmooth(audioEngine.musicGain, audioSettings.music ? audioSettings.musicVolume : 0, .8);
+    if(audioEngine.musicTimer) return;
+    musicTick();
+    audioEngine.musicTimer = setInterval(musicTick, 520);
+  }
+  function stopKingdomMusic(){
+    if(audioEngine.musicTimer){ clearInterval(audioEngine.musicTimer); audioEngine.musicTimer=null; }
+    if(audioEngine.musicGain) setGainSmooth(audioEngine.musicGain, 0, .5);
+  }
+  function refreshAudioVolumes(){
+    if(!audioEngine.ctx) return;
+    setGainSmooth(audioEngine.musicGain, audioSettings.music ? audioSettings.musicVolume : 0, .35);
+    setGainSmooth(audioEngine.sfxGain, audioSettings.sfx ? audioSettings.sfxVolume : 0, .15);
+  }
+  function sfx(type){
+    if(!audioSettings.sfx) return;
+    const ctx = initAudioEngine(); if(!ctx) return;
+    const now = ctx.currentTime;
+    if(type==='dice'){ playNoise(now, .18, .11); playTone(420, now, .08, .06, 'square', 'sfx'); playTone(610, now+.08, .08, .045, 'square', 'sfx'); }
+    else if(type==='combat'){ playTone(130, now, .14, .10, 'sawtooth', 'sfx'); playTone(92, now+.08, .22, .08, 'sawtooth', 'sfx'); playNoise(now, .25, .08); }
+    else if(type==='victory'){ [523,659,784,1046].forEach((n,i)=>playTone(n, now+i*.12, .28, .07, 'triangle', 'sfx')); }
+    else if(type==='turn'){ playTone(392, now, .12, .055, 'sine', 'sfx'); playTone(523, now+.12, .18, .05, 'sine', 'sfx'); }
+    else if(type==='night'){ playTone(196, now, .45, .07, 'triangle', 'sfx'); playTone(146.83, now+.12, .6, .05, 'sine', 'sfx'); }
+    else { playTone(523, now, .16, .05, 'sine', 'sfx'); }
+  }
+  function syncAudioControls(){
+    const pairs = [
+      ['musicEnabledToggle','checked','music'],['sfxEnabledToggle','checked','sfx'],['dayNightMusicToggle','checked','dayNight'],['fadeMusicToggle','checked','fade']
+    ];
+    pairs.forEach(([id,prop,key])=>{ const n=el(id); if(n) n[prop]=!!audioSettings[key]; });
+    if(el('musicVolumeRange')) el('musicVolumeRange').value = Math.round(audioSettings.musicVolume*100);
+    if(el('sfxVolumeRange')) el('sfxVolumeRange').value = Math.round(audioSettings.sfxVolume*100);
+  }
+  function bindAudioControl(id, handler){ const n=el(id); if(n) n.addEventListener('input', handler); if(n) n.addEventListener('change', handler); }
+  function setupAudioSettingsPanel(){
+    syncAudioControls();
+    if(el('settingsBtn')) el('settingsBtn').addEventListener('click', ()=>{ initAudioEngine(); syncAudioControls(); el('settingsModal').classList.add('show'); });
+    if(el('closeSettingsBtn')) el('closeSettingsBtn').addEventListener('click', ()=>el('settingsModal').classList.remove('show'));
+    bindAudioControl('musicEnabledToggle', e=>{ audioSettings.music=e.target.checked; saveAudioSettings(); refreshAudioVolumes(); if(audioSettings.music && state.gameStarted) startKingdomMusic(); });
+    bindAudioControl('sfxEnabledToggle', e=>{ audioSettings.sfx=e.target.checked; saveAudioSettings(); refreshAudioVolumes(); });
+    bindAudioControl('dayNightMusicToggle', e=>{ audioSettings.dayNight=e.target.checked; saveAudioSettings(); });
+    bindAudioControl('fadeMusicToggle', e=>{ audioSettings.fade=e.target.checked; saveAudioSettings(); });
+    bindAudioControl('musicVolumeRange', e=>{ audioSettings.musicVolume=Number(e.target.value)/100; saveAudioSettings(); refreshAudioVolumes(); });
+    bindAudioControl('sfxVolumeRange', e=>{ audioSettings.sfxVolume=Number(e.target.value)/100; saveAudioSettings(); refreshAudioVolumes(); });
+    if(el('testAudioBtn')) el('testAudioBtn').addEventListener('click', ()=>{ startKingdomMusic(); sfx('dice'); setTimeout(()=>sfx('victory'),300); });
+  }
+
+  const rand=max=>Math.floor(Math.random()*max);
+  const sameHex = (a,b) => !!a && !!b && a.id === b.id;
+  function rollDice(count){
+    const diceCount = Math.max(1, parseInt(count,10) || 1);
+    const rolls = Array.from({length:diceCount}, () => 1 + rand(6));
+    return { rolls, sum: rolls.reduce((total,n)=>total+n,0) };
+  }
+  function rollPoisonDice(count){
+    const diceCount = Math.min(3, Math.max(1, parseInt(count,10) || 1));
+    const rolls = Array.from({length:diceCount}, () => 1 + rand(3));
+    return { rolls, sum: rolls.reduce((total,n)=>total+n,0) };
+  }
+  const creatureByIndex=i=>CREATURES[i]; const playerById=id=>state.players.find(p=>p.id===id); const currentPlayer=()=>state.players[state.currentPlayerIndex]; const alivePlayers=()=>state.players.filter(p=>!p.eliminated); const effectiveOwner=unit=>unit?.controlledBy ?? unit?.ownerId; const ownsUnit = (unit, player) => !!unit && !!player && effectiveOwner(unit) === player.id;
+  function showStep(id){ document.querySelectorAll('.step').forEach(s=>s.classList.remove('active')); el(id).classList.add('active'); }
+  function sanitizeName(name){ return (name||'').replace(/[^\p{L}\p{N} _\-.]/gu,'').trim().slice(0,18); }
+  function generateRoomCode(){ return String(1000 + rand(9000)); }
+  function setNotice(id, text, klass=''){ const box=el(id); box.className='notice'+(klass?' '+klass:''); box.textContent=text; }
+  function safeJson(v){ return JSON.parse(JSON.stringify(v)); }
+  function log(msg){ state.logs.unshift(msg); if(state.logs.length>24) state.logs.length=24; const box=el('log'); if(box){ box.innerHTML = state.logs.map(x=>`<div class="entry">${x}</div>`).join(''); } }
+  function showCombat(atk,def,res){
+    const info = state.combatInfo || {};
+    if(info.interactive){
+      const atkDice = info.atkDice || 1;
+      const defDice = info.defDice || 1;
+      const atkDone = !!info.atkRolled;
+      const defDone = !!info.defRolled;
+      const mine = myPlayer ? myPlayer() : currentPlayer();
+      const mySide = mine && info.attackerPlayerId===mine.id ? 'atk' : (mine && info.defenderPlayerId===mine.id ? 'def' : 'atk');
+      const canRoll = (mySide==='atk' && !atkDone) || (mySide==='def' && !defDone);
+      el('combatBody').innerHTML = `
+        <div class="card">
+          <b>Scontro tra creature</b>
+          <div class="small" style="margin-top:6px">Ogni giocatore tira i suoi dadi. Se non tira entro 20 secondi, il gioco tira automaticamente.</div>
+          <div class="duel52-timer" id="duelTimer">Tempo per tirare: ${Math.max(0, info.timeLeft ?? 20)}s</div>
+        </div>
+        <div class="duel52-grid">
+          <div class="duel52-side">
+            <h3>Attaccante ${atkDone ? '✓' : '…'}</h3>
+            <div>${atk}</div>
+            <div class="duel52-dice" id="atkDiceRow">${Array.from({length:atkDice}).map((_,i)=>'<div class="duel52-die">'+(info.atkRoll ? diceFace(info.atkRoll.rolls[i]||1) : '🎲')+'</div>').join('')}</div>
+            <div class="duel52-total" id="atkTotal">Totale: ${info.atkRoll ? info.atkRoll.sum : '—'}</div>
+          </div>
+          <div class="duel52-side">
+            <h3>Difensore ${defDone ? '✓' : '…'}</h3>
+            <div>${def}</div>
+            <div class="duel52-dice" id="defDiceRow">${Array.from({length:defDice}).map((_,i)=>'<div class="duel52-die">'+(info.defRoll ? diceFace(info.defRoll.rolls[i]||1) : '🎲')+'</div>').join('')}</div>
+            <div class="duel52-total" id="defTotal">Totale: ${info.defRoll ? info.defRoll.sum : '—'}</div>
+          </div>
+        </div>
+        <div class="result" id="duelResult">${info.res || 'Premi TIRA.'}</div>`;
+      const btn = el('rollDuelBtn');
+      if(btn){ btn.style.display='inline-block'; btn.textContent='TIRA'; btn.disabled=!canRoll; }
+      startDuelCountdownUI();
+    } else {
+      el('combatBody').innerHTML=`<div class="card"><div><b>Attaccante:</b> ${atk}</div><div style="margin-top:8px"><b>Difensore:</b> ${def}</div><div class="result">${res}</div></div>`;
+      const btn = el('rollDuelBtn'); if(btn) btn.style.display='none';
+      stopDuelCountdownUI();
+    }
+    el('combatModal').classList.add('show');
+  }
+  
+  var duelCountdownTimer = null;
+  
+  
+  function animateOneSideRoll(side, roll, after){
+    const rowId = side==='atk' ? 'atkDiceRow' : 'defDiceRow';
+    const totalId = side==='atk' ? 'atkTotal' : 'defTotal';
+    const dice = Array.from(document.querySelectorAll('#'+rowId+' .duel52-die'));
+    dice.forEach(d=>d.classList.add('rolling'));
+    let ticks = 0;
+    const timer = setInterval(()=>{
+      dice.forEach(d=>{ d.textContent = diceFace(1+rand(6)); });
+      ticks++;
+      if(ticks>=12){
+        clearInterval(timer);
+        dice.forEach((d,i)=>{ d.classList.remove('rolling'); d.textContent=diceFace(roll.rolls[i]||1); });
+        const total = el(totalId); if(total) total.textContent = 'Totale: ' + roll.sum;
+        if(after) after();
+      }
+    },90);
+  }
+  
+  function diceFace(n){ return ['⚀','⚁','⚂','⚃','⚄','⚅'][Math.max(1,Math.min(6,n))-1]; }
+  var duelCountdownTimer = null;
+  function stopDuelCountdownUI(){ if(duelCountdownTimer){ clearInterval(duelCountdownTimer); duelCountdownTimer=null; } }
+  function startDuelCountdownUI(){
+    stopDuelCountdownUI();
+    duelCountdownTimer=setInterval(()=>{
+      const info=state.combatInfo;
+      if(!info || !info.interactive || !info.deadline || (info.atkRolled && info.defRolled)){ stopDuelCountdownUI(); return; }
+      const left=Math.max(0, Math.ceil((info.deadline-Date.now())/1000));
+      const n=el('duelTimer'); if(n) n.textContent='Tempo per tirare: '+left+'s';
+      if(left<=0) stopDuelCountdownUI();
+    },250);
+  }
+  function animateDuelRoll(){
+    sfx('dice');
+    const info=state.combatInfo;
+    if(!info || !info.interactive) return;
+    const mine = myPlayer ? myPlayer() : currentPlayer();
+    const side = mine && info.attackerPlayerId===mine.id ? 'atk' : (mine && info.defenderPlayerId===mine.id ? 'def' : 'atk');
+    const already = side==='atk' ? info.atkRolled : info.defRolled;
+    if(already) return;
+    const btn=el('rollDuelBtn'); if(btn) btn.disabled=true;
+    const rowId = side==='atk' ? 'atkDiceRow' : 'defDiceRow';
+    const dice = Array.from(document.querySelectorAll('#'+rowId+' .duel52-die'));
+    dice.forEach(d=>d.classList.add('rolling'));
+    let ticks=0;
+    const timer=setInterval(()=>{
+      dice.forEach(d=>d.textContent=String(1+rand(3)));
+      ticks++;
+      if(ticks>=12){
+        clearInterval(timer);
+        dice.forEach(d=>d.classList.remove('rolling'));
+        if(network && network.role==='guest') sendAction('rollDuel',{side});
+        else handleDuelRollHost(network?.myPeerId || currentPlayer().peerId, side, false);
+      }
+    },90);
+  }
+  function handleDuelRollHost(peerId, side, automatic=false){
+    const duel=state.pendingDuel;
+    if(!duel || !state.combatInfo || !state.combatInfo.interactive) return;
+
+    // Sicurezza: accetta solo il tiro del lato corretto.
+    // I tiri automatici dell'host possono passare anche se il peerId non combacia.
+    if(side!=='atk' && side!=='def') return;
+    if(!automatic){
+      if(side==='atk' && peerId!==duel.attackerPeerId) return;
+      if(side==='def' && peerId!==duel.defenderPeerId) return;
+    }
+
+    if(side==='atk' && duel.atkRoll) return;
+    if(side==='def' && duel.defRoll) return;
+    const roll=rollDice(side==='atk'?duel.atkDice:duel.defDice);
+    if(side==='atk'){
+      duel.atkRoll=roll; state.combatInfo.atkRoll=roll; state.combatInfo.atkRolled=true;
+    } else {
+      duel.defRoll=roll; state.combatInfo.defRoll=roll; state.combatInfo.defRolled=true;
+    }
+    const sideName = side==='atk' ? 'Attaccante' : 'Difensore';
+    const rollText = `${sideName} ha tirato: ${roll.rolls.join(' + ')} = ${roll.sum}`;
+    state.combatInfo.res = automatic ? `Tiro automatico: ${rollText}.` : `${rollText}. Aspetto l'altro tiro.`;
+    state.combatInfo.nonce=Date.now();
+    syncState();
+    if(duel.atkRoll && duel.defRoll) finishPendingCreatureDuelHost();
+  }
+  var duelAutoTimer=null;
+  function scheduleDuelAutoRollHost(){
+    if(duelAutoTimer) clearTimeout(duelAutoTimer);
+    duelAutoTimer=setTimeout(()=>{
+      const duel=state.pendingDuel;
+      if(!duel) return;
+      if(!duel.atkRoll) handleDuelRollHost(duel.attackerPeerId,'atk',true);
+      if(!duel.defRoll) handleDuelRollHost(duel.defenderPeerId,'def',true);
+    },20500);
+  }
+
+  function forceFinishStaleDuelHost(){
+    const duel = state.pendingDuel;
+    if(!duel) return false;
+    // Se un duello resta aperto per troppo tempo, sblocca la partita:
+    // genera automaticamente i tiri mancanti e chiude il duello.
+    if(Date.now() < (duel.deadline || 0) + 3500) return false;
+    if(!duel.atkRoll){
+      const roll = rollDice(duel.atkDice || 1);
+      duel.atkRoll = roll;
+      if(state.combatInfo){ state.combatInfo.atkRoll = roll; state.combatInfo.atkRolled = true; }
+    }
+    if(!duel.defRoll){
+      const roll = rollDice(duel.defDice || 1);
+      duel.defRoll = roll;
+      if(state.combatInfo){ state.combatInfo.defRoll = roll; state.combatInfo.defRolled = true; }
+    }
+    finishPendingCreatureDuelHost();
+    return true;
+  }
+  function resetUnitsForPlayer(player){
+    if(!player) return;
+    state.board.forEach(h=>{
+      if(h.unit && effectiveOwner(h.unit)===player.id){
+        h.unit.moved = false;
+        h.unit.acted = false;
+      }
+    });
+  }
+
+  function normalizeCurrentTurnHost(reason=''){
+    if(network.role!=='host' || !state.gameStarted || state.winner || !state.players.length) return false;
+    const alive = state.players.filter(p=>!p.eliminated);
+    if(!alive.length) return false;
+    let changed = false;
+    if(state.currentPlayerIndex < 0 || state.currentPlayerIndex >= state.players.length){
+      state.currentPlayerIndex = 0;
+      changed = true;
+    }
+    let guard = 0;
+    while(currentPlayer() && currentPlayer().eliminated && guard < state.players.length + 2){
+      const before = state.currentPlayerIndex;
+      nextPlayer();
+      if(state.currentPlayerIndex === 0 && before !== 0){
+        state.turn++;
+        state.cycle++;
+        advanceDayNightHost();
+        decayStatusEffects();
+      }
+      changed = true;
+      guard++;
+    }
+    const cp = currentPlayer();
+    // Fix movimento: non azzerare selezione/modalità a ogni click.
+    // Prima questo blocco cancellava state.selectedHex anche quando il turno era già valido,
+    // quindi cliccando su una casella raggiungibile il gioco non ricordava più quale pedina muovere.
+    if(changed && cp && !cp.eliminated){
+      resetUnitsForPlayer(cp);
+      state.selectedHex = null;
+      state.mode = null;
+    }
+    if(changed){
+      log(`${reason ? reason + ': ' : ''}turno corretto automaticamente. Ora gioca <b>${currentPlayer().name}</b>.`);
+    }
+    return changed;
+  }
+
+  function turnWatchdogHost(){
+    if(network.role!=='host' || !state.gameStarted || state.winner) return;
+    if(forceFinishStaleDuelHost()) return;
+    if(normalizeCurrentTurnHost('Controllo turno')) syncState();
+  }
+  function finishPendingCreatureDuelHost(){
+    sfx('combat');
+    const duel=state.pendingDuel;
+    if(!duel || !duel.atkRoll || !duel.defRoll) return;
+    if(duelAutoTimer){ clearTimeout(duelAutoTimer); duelAutoTimer=null; }
+    const from=state.board.find(h=>h.id===duel.fromId);
+    const to=state.board.find(h=>h.id===duel.toId);
+    const cp=playerById(duel.attackerId);
+    if(!from || !to || !from.unit || !to.unit || !cp){ state.pendingDuel=null; syncState(); return; }
+    let result='';
+    if(duel.atkRoll.sum > duel.defRoll.sum){
+      result=`${cp.name} vince il duello: il difensore ha il punteggio più basso e la sua creatura muore.`;
+      resolveAttackWinOnUnit(from,to,cp);
+    } else if(duel.defRoll.sum > duel.atkRoll.sum){
+      result=`${cp.name} perde il duello: l'attaccante ha il punteggio più basso e la sua creatura muore.`;
+      resolveAttackLoseOnUnit(from,to,cp);
+    } else {
+      result=`Pareggio: vince il difensore e la creatura attaccante muore.`;
+      resolveAttackLoseOnUnit(from,to,cp);
+    }
+    state.combatInfo.res = `${result}<br><b>Attaccante:</b> ${duel.atkRoll.rolls.join(' + ')} = ${duel.atkRoll.sum}<br><b>Difensore:</b> ${duel.defRoll.rolls.join(' + ')} = ${duel.defRoll.sum}`;
+    state.combatInfo.pendingResolution=false;
+    state.combatInfo.nonce=Date.now();
+    state.pendingDuel=null;
+    endTurnHost(true);
+  }
+
+  function closeCombat(){ stopDuelCountdownUI(); el('combatModal').classList.remove('show'); }
+  function announce(msg){ log(msg); syncState(); }
+
+  // Connessione più robusta anche tra Wi‑Fi diversi / luoghi diversi.
+  // Usa il server pubblico PeerJS in HTTPS per registrare il codice stanza.
+  // STUN aiuta i dispositivi a trovarsi su internet; su reti scolastiche/aziendali molto chiuse può servire un TURN.
+  const PEER_CONFIG = {
+    host: '0.peerjs.com',
+    port: 443,
+    path: '/',
+    secure: true,
+    debug: 2,
+    pingInterval: 5000,
+    config: {
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' },
+        { urls: 'stun:stun2.l.google.com:19302' },
+        { urls: 'stun:global.stun.twilio.com:3478' },
+        { urls: 'stun:stun.cloudflare.com:3478' }
+      ],
+      iceCandidatePoolSize: 10
+    }
+  };
+
+  function normalizeRoomCode(value){
+    return String(value || '').replace(/\D/g,'').slice(0,4);
+  }
+
+  function roomPeerId(code){
+    return 'koc-' + normalizeRoomCode(code);
+  }
+
+  function cleanupNetwork(){
+    try{ if(network.clientConn) network.clientConn.close(); }catch(e){}
+    Object.values(network.connections || {}).forEach(c=>{ try{ c.close(); }catch(e){} });
+    try{ if(network.peer && !network.peer.destroyed) network.peer.destroy(); }catch(e){}
+    network.peer=null;
+    network.clientConn=null;
+    network.connections={};
+    network.connected=false;
+    network.hostPeerId='';
+    network.myPeerId='';
+  }
+
+  function initPeer(peerId){
+    return new Promise((resolve,reject)=>{
+      let peer;
+      try{
+        peer = peerId ? new Peer(peerId, PEER_CONFIG) : new Peer(undefined, PEER_CONFIG);
+      }catch(err){
+        reject(err);
+        return;
+      }
+      let done=false;
+      const failTimer=setTimeout(()=>{
+        if(done) return;
+        done=true;
+        try{ peer.destroy(); }catch(e){}
+        reject(new Error('Connessione troppo lenta. Riprova oppure crea una nuova stanza.'));
+      },30000);
+      peer.on('open', id=>{ if(done) return; done=true; clearTimeout(failTimer); resolve({peer,id}); });
+      peer.on('error', err=>{ if(done) return; done=true; clearTimeout(failTimer); try{ peer.destroy(); }catch(e){} reject(err); });
+    });
+  }
+
+  function sendDirect(conn, type, payload){
+    try{
+      if(conn) conn.send({type,payload});
+    }catch(e){
+      console.warn('Invio messaggio fallito:', type, e);
+    }
+  }
+  function broadcast(type, payload){
+    Object.values(network.connections).forEach(conn=>{
+      if(conn && conn.open) sendDirect(conn,type,payload);
+    });
+  }
+  function lobbyPayload(){
+    return {players: safeJson(network.peers), roomCode:state.roomCode, settings:{mapSize:state.mapSize, playerCount:state.playerCount}};
+  }
+  function syncLobby(){ if(network.role==='host'){ const payload=lobbyPayload(); broadcast('lobby', payload); updateLobbyRoster(); } }
+  function syncState(){ if(network.role==='host'){ const payload = exportGameState(); broadcast('state', payload); renderFromState(); } }
+  function exportGameState(){ return safeJson({ state, peers:network.peers, roleMap: state.players.map(p=>({id:p.id,name:p.name,peerId:p.peerId||''})), roomCode:state.roomCode }); }
+  function importGameState(payload){ Object.assign(state, payload.state); network.peers = payload.peers || network.peers; renderFromState(); }
+  function isMyTurn(){ const cp=currentPlayer(); return !!cp && cp.peerId===network.myPeerId; }
+  function myPlayer(){ return state.players.find(p=>p.peerId===network.myPeerId) || null; }
+  function sendAction(action, data={}){ if(network.role==='host'){ handleRemoteAction(network.myPeerId, action, data); } else if(network.clientConn?.open){ network.clientConn.send({type:'action', payload:{action,data}}); } else { alert('Non sei collegato alla stanza. Torna alla lobby e rientra con il codice.'); } }
+
+  async function createRoom(){
+    const btn=el('createRoomBtn');
+    if(btn) btn.disabled=true;
+    try{
+      cleanupNetwork();
+      state.playerCount = parseInt(el('playerCount').value,10);
+      state.mapSize = el('mapSize').value;
+      setNotice('networkCreateStatus','Sto creando la stanza online...');
+      let created=null, lastErr=null;
+      for(let attempt=0; attempt<10 && !created; attempt++){
+        const code = generateRoomCode();
+        try{
+          const res = await initPeer(roomPeerId(code));
+          created = {code, ...res};
+        }catch(err){
+          lastErr = err;
+          const msg = String(err?.type || err?.message || err || '');
+          // Se il codice è già occupato, ne provo subito un altro.
+          if(!/unavailable|taken|ID|id/i.test(msg) && attempt>=2) break;
+        }
+      }
+      if(!created) throw lastErr || new Error('Non sono riuscito a creare un codice stanza libero.');
+      state.roomCode = created.code;
+      network.peer = created.peer;
+      network.role='host';
+      network.roomCode=state.roomCode;
+      network.myPeerId=created.id;
+      network.hostPeerId=created.id;
+      network.peers=[{name:state.localPlayerName, peerId:created.id, isHost:true}];
+      registerPeerEvents();
+      el('roomCodeBox').textContent=state.roomCode;
+      el('liveRoomCode').textContent=state.roomCode;
+      el('startMatchBtn').disabled=false;
+      setNotice('lobbyStatus','Stanza online attiva. Fai inserire agli amici esattamente questo codice a 4 cifre. Non chiudere questa pagina. Se non entrano, ricaricate entrambi e ricreate la stanza.','ok');
+      setNotice('networkCreateStatus','Codice creato: '+state.roomCode+'. Tieni questa pagina aperta mentre gli altri entrano.','ok');
+      showStep('stepLobby');
+      syncLobby();
+    } catch(err){
+      setNotice('networkCreateStatus','Non sono riuscito a creare la stanza. Ricarica la pagina e riprova.');
+      alert('Errore creazione stanza: '+(err?.message||err));
+    } finally {
+      if(btn) btn.disabled=false;
+    }
+  }
+
+  async function joinRoom(){
+    const btn=el('joinRoomBtn');
+    const code = normalizeRoomCode(el('joinCodeInput').value);
+    el('joinCodeInput').value = code;
+    if(!/^\d{4}$/.test(code)){ alert('Inserisci un codice di 4 cifre.'); return; }
+    if(btn) btn.disabled=true;
+    try{
+      cleanupNetwork();
+      state.roomCode=code;
+      setNotice('networkJoinStatus','Cerco la stanza '+code+'... l\'host deve tenere aperta la Lobby con lo stesso codice.');
+      const {peer,id} = await initPeer();
+      network.peer=peer;
+      network.role='guest';
+      network.myPeerId=id;
+      network.roomCode=code;
+      network.hostPeerId=roomPeerId(code);
+      registerPeerEvents();
+
+      await new Promise((resolve,reject)=>{
+        let joined=false;
+        let opened=false;
+        let joinInterval=null;
+        let lastStep='creazione connessione';
+        const conn = peer.connect(network.hostPeerId, {
+          reliable:true,
+          serialization:'json',
+          metadata:{type:'koc-join', name:state.localPlayerName, code, peerId:id, ts:Date.now()}
+        });
+        network.clientConn = conn;
+        const joinTimer=setTimeout(()=>{
+          if(joined) return;
+          try{ conn.close(); }catch(e){}
+          reject(new Error('Non sono entrato nella lobby. Ultimo passaggio: '+lastStep+'. Controlla che l\'host abbia la lobby aperta, codice '+code+', internet attivo e prova a ricaricare entrambe le pagine.'));
+        },35000);
+        function clearAll(){ clearTimeout(joinTimer); if(joinInterval) clearInterval(joinInterval); }
+        function sendJoin(){
+          if(!conn || !conn.open || joined) return;
+          lastStep='richiesta join inviata';
+          sendDirect(conn,'join',{name:state.localPlayerName, peerId:id, code});
+          setNotice('networkJoinStatus','Richiesta inviata all\'host. Aspetto la conferma della lobby...','ok');
+        }
+        conn.on('open', ()=>{
+          opened=true;
+          network.connected=true;
+          lastStep='connessione aperta';
+          sendJoin();
+          joinInterval=setInterval(sendJoin,1500);
+        });
+        conn.on('data', msg=>{
+          handleNetworkMessage(msg, conn);
+          if(msg && (msg.type==='joined' || msg.type==='lobby')){
+            joined=true;
+            clearAll();
+            setNotice('networkJoinStatus','Entrato nella lobby!','ok');
+            resolve();
+          }
+          if(msg && msg.type==='error'){
+            joined=true;
+            clearAll();
+            reject(new Error(msg.payload || 'L\'host ha rifiutato l\'ingresso.'));
+          }
+        });
+        conn.on('close', ()=>{
+          network.connected=false;
+          if(!joined){ clearAll(); reject(new Error(opened ? 'Connessione chiusa prima di entrare. Riprova dopo aver ricaricato host e giocatore.' : 'Impossibile aprire la connessione con il codice '+code+'.')); }
+          else setNotice('networkJoinStatus','Connessione con l\'host chiusa.');
+        });
+        conn.on('error', err=>{
+          if(joined) return;
+          clearAll();
+          reject(err || new Error('Errore di connessione con l\'host.'));
+        });
+      });
+    } catch(err){
+      setNotice('networkJoinStatus','Non sono riuscito a entrare. Ricarica host e giocatore, ricrea la stanza e riprova. Se succede ancora, la rete blocca WebRTC/PeerJS.');
+      alert('Errore ingresso stanza: '+(err?.message||err));
+    } finally {
+      if(btn) btn.disabled=false;
+    }
+  }
+
+  function registerPeerEvents(){
+    network.peer.on('connection', conn=>{
+      if(network.role!=='host') return;
+      network.connections[conn.peer]=conn;
+      conn.on('open', ()=>{
+        network.connections[conn.peer]=conn;
+        // Alcuni browser ricevono la connessione ma perdono il primo messaggio: uso anche i metadata come richiesta di ingresso.
+        const md = conn.metadata || {};
+        if(md && md.type==='koc-join'){
+          handleNetworkMessage({type:'join', payload:{name:md.name, peerId:md.peerId || conn.peer, code:md.code}}, conn);
+        }
+      });
+      conn.on('data', msg=>handleNetworkMessage(msg, conn));
+      conn.on('close', ()=>{ const idx=network.peers.findIndex(p=>p.peerId===conn.peer); if(idx>=0){ const left=network.peers[idx]; network.peers.splice(idx,1); syncLobby(); announce(`<b>${left.name}</b> si è disconnesso dalla stanza.`); if(state.gameStarted){ const pl=state.players.find(p=>p.peerId===left.peerId); if(pl){ pl.eliminated=true; syncState(); } } } delete network.connections[conn.peer]; });
+      conn.on('error', ()=>{ delete network.connections[conn.peer]; });
+    });
+    network.peer.on('disconnected', ()=>{ try{ network.peer.reconnect(); }catch(e){} });
+    network.peer.on('close', ()=>{
+      network.connected=false;
+      if(network.role==='host') setNotice('lobbyStatus','Connessione stanza chiusa. Ricrea la partita per avere un nuovo codice.');
+      if(network.role==='guest') setNotice('networkJoinStatus','Connessione chiusa. Rientra con il codice.');
+    });
+    network.peer.on('error', err=>{
+      console.error(err);
+      const msg = err?.type==='peer-unavailable' ? 'Codice non trovato: controlla che l\'host abbia la lobby aperta.' : (err?.message || String(err));
+      if(network.role==='guest') setNotice('networkJoinStatus','Errore connessione: '+msg);
+      if(network.role==='host') setNotice('lobbyStatus','Errore stanza: '+msg);
+    });
+  }
+
+  function handleNetworkMessage(msg, conn){
+    if(!msg || !msg.type) return;
+    if(network.role==='host'){
+      if(msg.type==='join'){
+        const guestPeerId = msg.payload?.peerId || conn.peer;
+        if(msg.payload?.code && normalizeRoomCode(msg.payload.code)!==state.roomCode){
+          sendDirect(conn,'error','Codice stanza non valido.');
+          return;
+        }
+        const alreadyInLobby = network.peers.some(p=>p.peerId===guestPeerId);
+        if(!alreadyInLobby && network.peers.length >= Math.min(6, state.playerCount)){
+          sendDirect(conn,'error','La stanza è piena.');
+          return;
+        }
+        const cleanName = sanitizeName(msg.payload?.name)||'Giocatore';
+        network.connections[guestPeerId]=conn;
+        network.connections[conn.peer]=conn;
+        const existing = network.peers.find(p=>p.peerId===guestPeerId);
+        if(!existing){
+          network.peers.push({name: cleanName, peerId: guestPeerId, isHost:false});
+          log(`<b>${cleanName}</b> entra nella lobby.`);
+        } else {
+          existing.name = cleanName;
+        }
+        const payload = lobbyPayload();
+        sendDirect(conn,'joined',{roomCode:state.roomCode});
+        sendDirect(conn,'lobby',payload);
+        syncLobby();
+      }
+      if(msg.type==='action'){ handleRemoteAction(conn.peer, msg.payload.action, msg.payload.data || {}); }
+    } else {
+      if(msg.type==='joined'){
+        showStep('stepLobby');
+        el('roomCodeBox').textContent=state.roomCode;
+        el('liveRoomCode').textContent=state.roomCode;
+        setNotice('lobbyStatus','Sei entrato nella lobby. Aspetta che l\'host inizi la partita.','ok');
+        el('startMatchBtn').disabled=true;
+      }
+      if(msg.type==='lobby'){
+        network.peers = msg.payload.players || [];
+        state.roomCode = msg.payload.roomCode || state.roomCode;
+        state.mapSize = msg.payload.settings?.mapSize || state.mapSize;
+        state.playerCount = msg.payload.settings?.playerCount || state.playerCount;
+        el('roomCodeBox').textContent=state.roomCode;
+        el('liveRoomCode').textContent=state.roomCode;
+        updateLobbyRoster();
+      }
+      if(msg.type==='state'){ importGameState(msg.payload); }
+      if(msg.type==='revealCreatures'){ showCreatureRevealFromState(); }
+      if(msg.type==='error'){ alert(msg.payload); }
+    }
+  }
+  function updateLobbyRoster(){ const box=el('lobbyRoster'); box.innerHTML=''; network.peers.forEach((player,idx)=>{ const div=document.createElement('div'); div.className='roster-item'; div.innerHTML=`<div><b>${player.name}</b><div class="mini">${player.isHost?'Host':'Giocatore'}</div></div><div class="chip">${idx+1}</div>`; box.appendChild(div); }); }
+
+  function setupBoard(size){ const cfg={small:{rows:6,cols:8},medium:{rows:7,cols:10},large:{rows:8,cols:12}}[size]; state.rows=cfg.rows; state.cols=cfg.cols; state.board=[]; for(let r=0;r<state.rows;r++) for(let c=0;c<state.cols;c++) state.board.push({id:`${r}-${c}`,r,c,territory:null,unit:null,hut:null,tenebelves:false}); }
+  function getHex(r,c){ return state.board.find(h=>h.r===r && h.c===c); }
+  function neighbors(hex){ const even=hex.r%2===0; const dirs=even?[[-1,-1],[-1,0],[0,-1],[0,1],[1,-1],[1,0]]:[[-1,0],[-1,1],[0,-1],[0,1],[1,0],[1,1]]; return dirs.map(([dr,dc])=>getHex(hex.r+dr,hex.c+dc)).filter(Boolean); }
+  function distance(a,b){ if(a===b) return 0; const visited=new Set([a.id]); const q=[[a,0]]; while(q.length){ const [cur,d]=q.shift(); for(const n of neighbors(cur)){ if(n.id===b.id) return d+1; if(!visited.has(n.id)){ visited.add(n.id); q.push([n,d+1]); } } } return 999; }
+  function reachable(hex,steps){ const out=[]; const visited=new Set([hex.id]); const q=[[hex,0]]; while(q.length){ const [cur,d]=q.shift(); for(const n of neighbors(cur)){ if(visited.has(n.id)) continue; if(d+1<=steps){ visited.add(n.id); if(!n.hut && !n.unit && !n.tenebelves){ out.push(n); q.push([n,d+1]); } } } } return out; }
+  function makeUnit(ownerId, level=1, flying=false){ return {ownerId, level, moved:false, acted:false, flying, controlledBy:null, infectionTurns:0, infectionSkipDecayUntil:null}; }
+  function placeStartingPositions(){ const starts=[getHex(0,0), getHex(0,state.cols-1), getHex(state.rows-1,0), getHex(state.rows-1,state.cols-1), getHex(Math.floor(state.rows/2),0), getHex(Math.floor(state.rows/2),state.cols-1)]; state.players.forEach((p,idx)=>{ const h=starts[idx]; h.hut={ownerId:p.id}; h.territory=p.id; const near=neighbors(h).find(n=>!n.unit && !n.hut); if(near){ near.unit=makeUnit(p.id,1,p.species.id==='birds'); near.territory=p.id; } }); }
+  
+  function shuffledCreatures(){
+    const arr = CREATURES.map(x=>x);
+    for(let i=arr.length-1;i>0;i--){
+      const j = rand(i+1);
+      [arr[i],arr[j]] = [arr[j],arr[i]];
+    }
+    return arr;
+  }
+  function playCreatureReveal(){
+    return new Promise(resolve=>{
+      const overlay=el('creatureReveal');
+      if(!overlay){ resolve(); return; }
+      const orb=el('revealOrb'), name=el('revealName'), rule=el('revealRule'), sub=el('revealSub'), order=el('revealOrder');
+      overlay.classList.add('show');
+      orb.classList.add('spinning');
+      let step=0;
+      const sequence = state.players.map(p=>p);
+      order.innerHTML = sequence.map((p,i)=>`<div>${i+1}. <b>${p.name}</b> — <span class="mini">in rivelazione...</span></div>`).join('');
+      const spin = setInterval(()=>{
+        const c = CREATURES[rand(CREATURES.length)];
+        orb.textContent = c.icon;
+        name.textContent = c.name;
+        rule.textContent = 'Sto scegliendo casualmente...';
+      },90);
+      function revealNext(){
+        if(step>=sequence.length){
+          clearInterval(spin);
+          orb.classList.remove('spinning');
+          sub.textContent='Assegnazione completata!';
+          name.textContent='La partita sta iniziando';
+          rule.textContent='Host primo, poi i giocatori in ordine di entrata.';
+          order.innerHTML = sequence.map((p,i)=>`<div>${i+1}. <b>${p.name}</b> → ${p.species.icon} <b style="color:${p.species.color}">${p.species.name}</b></div>`).join('');
+          setTimeout(()=>{ overlay.classList.remove('show'); resolve(); },1800);
+          return;
+        }
+        const p = sequence[step];
+        orb.textContent = p.species.icon;
+        name.innerHTML = `<span style="color:${p.species.color}">${p.species.name}</span>`;
+        rule.textContent = `${p.name}: ${p.species.rule}`;
+        sub.textContent = `Giocatore ${step+1} di ${sequence.length}`;
+        order.innerHTML = sequence.map((pl,i)=>{
+          if(i<step) return `<div>${i+1}. <b>${pl.name}</b> → ${pl.species.icon} <b style="color:${pl.species.color}">${pl.species.name}</b></div>`;
+          if(i===step) return `<div>${i+1}. <b>${pl.name}</b> → ✨ <b>rivelato adesso</b></div>`;
+          return `<div>${i+1}. <b>${pl.name}</b> — <span class="mini">in attesa...</span></div>`;
+        }).join('');
+        step++;
+        setTimeout(revealNext,1400);
+      }
+      setTimeout(revealNext,900);
+    });
+  }
+  function showCreatureRevealFromState(){
+    if(!state.players || !state.players.length) return;
+    playCreatureReveal();
+  }
+async function startGameHost(){ if(network.role!=='host') return; const count=Math.min(parseInt(el('playerCount').value,10), network.peers.length); state.playerCount=count; state.mapSize=el('mapSize').value; setupBoard(state.mapSize); state.players=[]; state.currentPlayerIndex=0; state.turn=1; state.cycle=1; state.isNight=false; state.phaseTurns=0; state.phaseTurns=0; state.selectedHex=null; state.mode=null; state.pendingPoisons=[]; state.spiderPoisonQueue=[]; state.activePoison=null; state.winner=null; state.gameStarted=true; state.logs=[]; state.combatInfo=null; state.actionSerial=0; state.lastAnimation=null; state.mergeAnimation=null; state.lastPoisonResult=null;  const randomSpecies = shuffledCreatures(); for(let i=0;i<count;i++){ const peerPlayer = network.peers[i]; const species=randomSpecies[i]; state.players.push({id:'P'+(i+1), peerId: peerPlayer.peerId, name: peerPlayer.name, species, gems:0, personalTurns:0, hutsOwned:1, humanSkillUsed:0, eliminated:false}); }
+    placeStartingPositions(); announce(`La guerra ha inizio. Codice stanza <b>${state.roomCode}</b>.`); announce(`Creature casuali assegnate. Ordine turni: ${state.players.map(p=>`<b>${p.name}</b> (${p.species.name})`).join(' → ')}.`); el('startScreen').classList.add('hidden'); el('app').classList.add('show'); startKingdomMusic(); sfx('victory'); syncState(); broadcast('revealCreatures', {}); await playCreatureReveal(); syncState(); }
+  function handleRemoteAction(peerId, action, data){
+    if(!state.gameStarted && action!=='startGame') return;
+    if(action==='startGame'){
+      if(network.role==='host' && peerId===network.myPeerId) startGameHost();
+      return;
+    }
+
+    // Il duello è speciale: anche il difensore deve poter tirare,
+    // pur non essendo il giocatore di turno. Prima questo veniva bloccato
+    // dal controllo sul turno e il pulsante TIRA sembrava non funzionare.
+    if(action==='rollDuel'){
+      handleDuelRollHost(peerId, data.side, false);
+      return;
+    }
+
+    if(forceFinishStaleDuelHost()) return;
+    if(normalizeCurrentTurnHost('Controllo azione')) syncState();
+
+    const cp=currentPlayer();
+    if(!cp || cp.eliminated || cp.peerId!==peerId){
+      if(network.role==='host') syncState();
+      return;
+    }
+    if(action==='select'){ const hex=state.board.find(h=>h.id===data.hexId); if(hex) onHexClickHost(hex); }
+    else if(action==='spawnMode') beginSpawnModeHost();
+    else if(action==='spawnGemMode') beginSpawnModeHost();
+    else if(action==='mergeMode') beginMergeModeHost();
+    else if(action==='newHut') createNewHutHost();
+    else if(action==='humanSkill') useHumanSkillHost();
+    else if(action==='endTurn') endTurnHost(false);
+    else if(action==='usePoison') useSpiderPoisonHost();
+    else if(action==='skipPoison') skipSpiderPoisonHost();
+  }
+  function moveDistance(unit, player){ return player.species.id==='reptiles' ? 2 : 1; }
+  function canAttack(from,target,player){
+    if(!from || !target || !from.unit || !player) return false;
+    if(!ownsUnit(from.unit, player)) return false;
+    if(from.unit.acted) return false;
+    if(distance(from,target)!==1) return false;
+    const attackerSpecies = player.species.id;
+    if(target.tenebelves){
+      if(attackerSpecies==='anthro') return false;
+      return true;
+    }
+    if(target.unit){
+      if(ownsUnit(target.unit, player)) return false;
+      if(target.unit.flying && attackerSpecies!=='birds' && attackerSpecies!=='reptiles') return false;
+      return true;
+    }
+    if(target.hut){
+      return target.hut.ownerId!==player.id;
+    }
+    return false;
+  }
+  function onHexClickHost(hex){
+    if(!state.gameStarted || state.winner || !hex) return;
+    const cp=currentPlayer();
+    if(!cp || cp.eliminated){ normalizeCurrentTurnHost('Click mappa'); syncState(); return; }
+    const target = state.board.find(h=>h.id===hex.id) || hex;
+    const selected = state.selectedHex ? (state.board.find(h=>h.id===state.selectedHex.id) || null) : null;
+    if(state.mode==='spawnGem' || state.mode==='spawnChoose' || state.mode==='spawn') return handleSpawnClickHost(target);
+    if(state.mode==='merge') return handleMergeClickHost(target);
+    if(selected && selected.unit && ownsUnit(selected.unit, cp)){
+      const src=selected;
+      if(sameHex(src,target)){ syncState(); return; }
+      if(canAttack(src,target,cp)){ attackHost(src,target); return; }
+      const canMove = !src.unit.moved && !src.unit.acted && !target.unit && !target.hut && !target.tenebelves && reachable(src, moveDistance(src.unit,cp)).some(h=>h.id===target.id);
+      if(canMove){ moveUnitHost(src,target); return; }
+      if(target.unit && ownsUnit(target.unit,cp)){ state.selectedHex=target; state.mode=null; syncState(); return; }
+      log('Movimento non valido: scegli una casella libera evidenziata in azzurro.');
+      syncState();
+      return;
+    }
+    if((target.unit && ownsUnit(target.unit, cp)) || (target.hut && target.hut.ownerId===cp.id)){
+      state.selectedHex=target;
+      state.mode=null;
+      syncState();
+      return;
+    }
+    state.selectedHex=null;
+    state.mode=null;
+    syncState();
+  }
+
+  function finishActionAndAdvanceTurnHost(message){
+    // Regola rigida: ogni azione principale consuma il turno.
+    // Usiamo log() invece di announce() per evitare una sync intermedia
+    // prima del cambio turno: gli altri dispositivi ricevono direttamente
+    // lo stato già passato al giocatore successivo.
+    if(message) log(message);
+    state.selectedHex=null;
+    state.mode=null;
+    updateDayNight();
+    renderDayNight();
+    endTurnHost(true);
+    if(el('poisonModal')) el('poisonModal').classList.remove('show');
+  }
+
+  function moveUnitHost(from,to){
+    const cp=currentPlayer();
+    const src = from ? (state.board.find(h=>h.id===from.id) || from) : null;
+    const dst = to ? (state.board.find(h=>h.id===to.id) || to) : null;
+    const unit=src?.unit;
+    if(!cp || !unit){ syncState(); return; }
+    if(!ownsUnit(unit, cp)){ state.selectedHex=null; log('Non puoi muovere pedine degli altri giocatori.'); syncState(); return; }
+    if(unit.moved || unit.acted){ log('Questa pedina ha già fatto un’azione in questo turno.'); state.selectedHex=src; syncState(); return; }
+    if(!dst || dst.unit || dst.hut || dst.tenebelves){ log('Movimento non valido: la casella deve essere libera.'); state.selectedHex=src; syncState(); return; }
+    if(!reachable(src, moveDistance(unit,cp)).some(h=>h.id===dst.id)){ log('Movimento non valido: puoi muoverti solo sulle caselle azzurre.'); state.selectedHex=src; syncState(); return; }
+    state.lastAnimation={fromId:src.id,toId:dst.id,emoji:cp.species.icon,nonce:Date.now()};
+    dst.unit=unit;
+    src.unit=null;
+    unit.moved=true;
+    unit.acted=true;
+    dst.territory=cp.id;
+    src.territory=cp.id;
+    finishActionAndAdvanceTurnHost(`<b>${cp.name}</b> sposta una pedina di <b>${cp.species.name}</b>.`);
+  }
+  
+  function attackHost(from,to){
+    if(state.pendingDuel){
+      if(forceFinishStaleDuelHost()) return;
+      announce('C’è già un duello in corso: completate prima i tiri o aspettate il tiro automatico.');
+      return;
+    }
+    const atk=from.unit, cp=currentPlayer();
+    if(!cp || !atk || !ownsUnit(atk, cp) || atk.acted){
+      state.selectedHex=null;
+      log('Non puoi usare o attaccare con pedine degli altri giocatori.');
+      syncState();
+      return;
+    }
+    if(!canAttack(from,to,cp)){
+      log('Attacco non valido: puoi attaccare solo bersagli nemici adiacenti con una tua pedina.');
+      syncState();
+      return;
+    }
+
+    if(to.tenebelves && typeof attackNightCreatureHost === 'function'){
+      attackNightCreatureHost(from,to,cp);
+      return;
+    }
+    if(!to.unit && !to.hut) return;
+
+    const atkDice=Math.max(1, atk.level);
+    const defDice=to.hut ? 3 : Math.max(1, to.unit.level);
+    const defName = to.hut ? `Capanna di ${playerById(to.hut.ownerId).name}` : `${playerById(effectiveOwner(to.unit)).name} Lv${to.unit.level}${to.unit.controlledBy&&to.unit.controlledBy!==to.unit.ownerId?' ☣':''}`;
+
+    if(to.hut){
+      const atkRoll=rollDice(atkDice), defRoll=rollDice(defDice);
+      let result = atkRoll.sum>defRoll.sum ? `${cp.name} vince il duello.` : `${cp.name} perde il duello.`;
+      if(atkRoll.sum>defRoll.sum) resolveAttackWinOnUnit(from,to,cp);
+      else resolveAttackLoseOnUnit(from,to,cp);
+      state.combatInfo={
+        atk:`${cp.name} Lv${atk.level} · ${atkDice} dado/i (${atkRoll.rolls.join(' + ')} = ${atkRoll.sum})`,
+        def:`${defName} · ${defDice} dado/i (${defRoll.rolls.join(' + ')} = ${defRoll.sum})`,
+        res:result, interactive:false, nonce:Date.now()
+      };
+      state.selectedHex=null;
+      endTurnHost(true);
+      return;
+    }
+
+    const defenderPlayer=playerById(effectiveOwner(to.unit));
+    state.pendingDuel={
+      fromId:from.id, toId:to.id,
+      attackerId:cp.id, defenderId:defenderPlayer.id,
+      attackerPeerId:cp.peerId, defenderPeerId:defenderPlayer.peerId,
+      atkDice, defDice, deadline:Date.now()+20000
+    };
+    state.combatInfo={
+      atk:`${cp.name} Lv${atk.level} · ${atkDice} dado/i`,
+      def:`${defName} · ${defDice} dado/i`,
+      res:'Aspetto i tiri dei giocatori.',
+      interactive:true, pendingResolution:true,
+      attackerPlayerId:cp.id, defenderPlayerId:defenderPlayer.id,
+      atkDice, defDice, atkRolled:false, defRolled:false,
+      deadline:state.pendingDuel.deadline,
+      timeLeft:20,
+      nonce:Date.now()
+    };
+    state.selectedHex=null;
+    syncState();
+    scheduleDuelAutoRollHost();
+  }
+
+  
+  var duelAutoTimer = null;
+  
+  
+  function attackNightCreatureHost(from,to,cp){
+    const atk = from.unit;
+    if(!atk || atk.acted || !to.tenebelves) return;
+    if(cp.species.id === 'anthro'){
+      announce('Le <b>Antropofiere</b> non possono attaccare le creature notturne.');
+      syncState();
+      return;
+    }
+    const atkRoll = rollDice(Math.max(1, atk.level));
+    const zRoll = rollDice(Math.max(1, atk.level));
+    const result = atkRoll.sum > zRoll.sum ? `${cp.name} vince contro la creatura notturna.` : `${cp.name} perde contro la creatura notturna.`;
+    if(atkRoll.sum > zRoll.sum){
+      to.tenebelves = false;
+      atk.acted = true;
+      announce(`<b>${cp.name}</b> elimina una creatura notturna ${NIGHT_CREATURE_ICON}.`);
+    } else {
+      from.unit = null;
+      announce(`Una creatura notturna ${NIGHT_CREATURE_ICON} elimina una pedina di <b>${cp.name}</b>.`);
+    }
+    state.combatInfo={
+      atk:`${cp.name} Lv${atk.level} · ${atk.level} dado/i (${atkRoll.rolls.join(' + ')} = ${atkRoll.sum})`,
+      def:`Creatura notturna ${NIGHT_CREATURE_ICON} · ${atk.level} dado/i (${zRoll.rolls.join(' + ')} = ${zRoll.sum})`,
+      res:result, interactive:false, nonce:Date.now()
+    };
+    finishActionAndAdvanceTurnHost(null);
+  }
+  function contaminateUnitBySlime(defender, slimePlayer){
+    if(!defender || !slimePlayer) return;
+    defender.controlledBy = slimePlayer.id;
+    defender.infectionTurns = 3;
+    // Evita che il turno automatico appena successivo al duello consumi subito 1 turno di contagio.
+    defender.infectionSkipDecayUntil = (state.actionSerial || 0) + 1;
+    defender.moved = false;
+    defender.acted = false;
+  }
+
+  function resolveAttackWinOnUnit(from,to,atkOwner){
+    const atk=from.unit;
+    if(to.hut){
+      destroyHut(to, atkOwner.id);
+      to.territory=atkOwner.id;
+      atk.acted=true;
+      return;
+    }
+    const defender=to.unit;
+    const defPlayer=playerById(defender.ownerId);
+    const wasControlled = !!defender.controlledBy && defender.controlledBy !== defender.ownerId;
+    if(atkOwner.species.id==='slime'){
+      contaminateUnitBySlime(defender, atkOwner);
+      to.territory=atkOwner.id;
+      announce(`<b>${atkOwner.name}</b> contagia la creatura di <b>${defPlayer.name}</b> per 3 turni. Finché è contagiata la comanda lo <b>Slime-virus</b>.`);
+    } else {
+      to.unit=null;
+      announce(`<b>${atkOwner.name}</b> elimina una creatura di <b>${defPlayer.name}</b>.`);
+    }
+    // Se la creatura era sotto contagio e muore, lo Slime-virus non subisce effetti collaterali.
+    if(!wasControlled && defPlayer.species.id==='spiders' && defender.level>=1 && atkOwner.id!==defPlayer.id){
+      scheduleSpiderPoison(defPlayer.id, from.id, defender.level, atkOwner.id);
+      announce(`Il veleno degli <b>Aracnidi</b> potrà essere usato al prossimo turno di <b>${defPlayer.name}</b>.`);
+    }
+    atk.acted=true;
+  }
+
+  function resolveAttackLoseOnUnit(from,to,atkOwner){
+    const atk=from.unit;
+    if(to.hut){
+      announce(`L'assalto di <b>${atkOwner.name}</b> alla capanna fallisce, ma l'unità sopravvive.`);
+      atk.acted=true;
+      return;
+    }
+    const originalOwner = playerById(atk.ownerId);
+    const wasControlled = !!atk.controlledBy && atk.controlledBy !== atk.ownerId;
+    // Se una creatura contagiata muore combattendo per lo Slime-virus, non succede nulla allo Slime-virus
+    // e non si attiva il veleno degli Aracnidi per una pedina che non era controllata dal suo proprietario.
+    if(!wasControlled && originalOwner && originalOwner.species.id==='spiders'){
+      scheduleSpiderPoison(atk.ownerId, to.id, atk.level, to.unit ? to.unit.ownerId : null);
+      announce(`Gli <b>Aracnidi</b> muoiono ma potranno usare il veleno al prossimo turno.`);
+    }
+    from.unit=null;
+  }
+  function destroyHut(hex,newOwnerId){ const old=playerById(hex.hut.ownerId); announce(`La capanna di <b>${old.name}</b> viene abbattuta.`); hex.hut=null; hex.territory=newOwnerId; }
+  function beginSpawnModeHost(){ const cp=currentPlayer(); if((cp.gems||0)<1){ announce(`A <b>${cp.name}</b> serve almeno 1 gemma.`); syncState(); return; } const huts = state.board.filter(h=>h.hut && h.hut.ownerId===cp.id);
+    let sourceHut = null;
+    if(state.selectedHex && state.selectedHex.hut && state.selectedHex.hut.ownerId===cp.id){
+      const selected = state.board.find(h=>h.id===state.selectedHex.id) || state.selectedHex;
+      const freeNearSelected = neighbors(selected).filter(n=>!n.unit && !n.hut && !n.tenebelves);
+      if(freeNearSelected.length){ sourceHut = selected; }
+    }
+    if(!sourceHut){
+      sourceHut = huts.find(h=>neighbors(h).some(n=>!n.unit && !n.hut && !n.tenebelves));
+    }
+    if(!sourceHut){ announce('Nessuna tua capanna ha caselle libere accanto per generare una creatura.'); syncState(); return; }
+    const free = neighbors(sourceHut).filter(n=>!n.unit && !n.hut && !n.tenebelves);
+    const spot = free[0];
+    cp.gems--;
+    spot.unit = makeUnit(cp.id,1,cp.species.id==='birds');
+    spot.territory = cp.id;
+    finishActionAndAdvanceTurnHost(`<b>${cp.name}</b> spende <b>1 gemma</b> e genera una nuova creatura di livello 1 accanto alla capanna.`);
+  }
+  function handleSpawnClickHost(hex){ const cp=currentPlayer(), src=state.selectedHex ? (state.board.find(h=>h.id===state.selectedHex.id) || state.selectedHex) : null; if(!src || !src.hut || src.hut.ownerId!==cp.id){ state.mode=null; syncState(); return; } if((cp.gems||0)<1){ announce(`A <b>${cp.name}</b> serve almeno 1 gemma.`); state.mode=null; syncState(); return; } if(neighbors(src).some(n=>n.id===hex.id) && !hex.unit && !hex.hut && !hex.tenebelves){ hex.unit=makeUnit(cp.id,1,cp.species.id==='birds'); hex.territory=cp.id; cp.gems--; finishActionAndAdvanceTurnHost(`<b>${cp.name}</b> spende <b>1 gemma</b> e genera una nuova creatura di livello 1 accanto alla capanna.`); return; } announce('Clicca una casella libera accanto alla capanna selezionata.'); state.mode=null; syncState(); }
+  function createNewHutHost(){ const cp=currentPlayer(); if((cp.gems||0) < 3){ announce(`A <b>${cp.name}</b> servono <b>3 gemme</b> per creare una nuova capanna.`); syncState(); return; } const huts = state.board.filter(h=>h.hut && h.hut.ownerId===cp.id); if(!huts.length){ announce('Non hai capanne da cui espanderti.'); syncState(); return; }
+    let sourceHut = null;
+    if(state.selectedHex && state.selectedHex.hut && state.selectedHex.hut.ownerId===cp.id){
+      const selected = state.board.find(h=>h.id===state.selectedHex.id) || state.selectedHex;
+      const freeNearSelected = neighbors(selected).filter(n=>!n.unit && !n.hut && !n.tenebelves);
+      if(freeNearSelected.length) sourceHut = selected;
+    }
+    if(!sourceHut){
+      sourceHut = huts.find(h=>neighbors(h).some(n=>!n.unit && !n.hut && !n.tenebelves));
+    }
+    if(!sourceHut){ announce('Nessuna tua capanna ha caselle libere accanto per costruirne un’altra.'); syncState(); return; }
+    const spot = neighbors(sourceHut).find(n=>!n.unit && !n.hut && !n.tenebelves);
+    cp.gems -= 3;
+    spot.hut = {ownerId:cp.id};
+    spot.territory = cp.id;
+    finishActionAndAdvanceTurnHost(`<b>${cp.name}</b> spende <b>3 gemme</b> e costruisce una nuova capanna accanto a un’altra capanna.`);
+  }
+  function beginMergeModeHost(){ const cp=currentPlayer(); const selected=state.selectedHex ? (state.board.find(h=>h.id===state.selectedHex.id) || state.selectedHex) : null; if(!selected || !selected.unit || !ownsUnit(selected.unit,cp)){ announce('Seleziona una tua creatura prima della fusione.'); return; } if(selected.unit.level>=3){ announce('Le creature di livello 3 non possono più fondersi.'); return; } state.mode='merge'; syncState(); }
+  function handleMergeClickHost(hex){ 
+    const cp=currentPlayer(), src=state.selectedHex ? (state.board.find(h=>h.id===state.selectedHex.id) || state.selectedHex) : null; 
+    if(src && src.unit && hex.unit && ownsUnit(src.unit,cp) && ownsUnit(hex.unit,cp) && src.unit.level===hex.unit.level && src.unit.level<3 && neighbors(src).some(n=>n.id===hex.id)){ 
+      src.unit.level += 1; 
+      src.unit.moved=true; 
+      src.unit.acted=true; 
+      hex.unit=null; 
+      state.mergeAnimation={hexId:src.id, nonce:Date.now()}; 
+      // L'aura viene salvata nello stato e mostrata da tutti i dispositivi al render successivo.
+      finishActionAndAdvanceTurnHost(`Due creature di <b>${cp.name}</b> si fondono: ora resta una sola pedina di livello <b>${src.unit.level}</b>, che lancia <b>${src.unit.level} dadi</b> nei duelli.`);
+      return; 
+    } 
+    announce('Per fondere devi selezionare 2 tue pedine dello stesso livello, una accanto all’altra.'); 
+    state.mode=null; 
+    syncState(); 
+  }
+  function useHumanSkillHost(){
+    const cp=currentPlayer();
+    if(!cp || cp.eliminated){ syncState(); return; }
+    if(cp.species.id!=='humans'){
+      announce('Solo gli <b>Umani</b> possono chiamare i rinforzi.');
+      syncState();
+      return;
+    }
+    if((cp.humanSkillUsed||0) >= 2){
+      announce(`<b>${cp.name}</b> ha già usato i rinforzi 2 volte.`);
+      syncState();
+      return;
+    }
+    const huts = state.board.filter(h=>h.hut && h.hut.ownerId===cp.id);
+    const sourceHut = huts.find(h=>neighbors(h).some(n=>!n.unit && !n.hut && !n.tenebelves));
+    if(!sourceHut){
+      announce('Non ci sono caselle libere accanto alle tue capanne per chiamare i rinforzi.');
+      syncState();
+      return;
+    }
+    const free = neighbors(sourceHut).filter(n=>!n.unit && !n.hut && !n.tenebelves).slice(0,2);
+    free.forEach(spot=>{
+      spot.unit = makeUnit(cp.id,1,cp.species.id==='birds');
+      spot.territory = cp.id;
+    });
+    cp.humanSkillUsed = (cp.humanSkillUsed||0) + 1;
+    finishActionAndAdvanceTurnHost(`<b>${cp.name}</b> chiama i rinforzi umani: entrano <b>${free.length}</b> nuova/e pedina/e. Uso ${cp.humanSkillUsed}/2.`);
+  }
+
+  function nightCreatureCount(){
+    if(state.mapSize==='small') return 3;
+    if(state.mapSize==='large') return 5;
+    return 4;
+  }
+  function centerHexes(){
+    const cr=(state.rows-1)/2, cc=(state.cols-1)/2;
+    return state.board
+      .map(h=>({h,d:Math.abs(h.r-cr)+Math.abs(h.c-cc)}))
+      .sort((a,b)=>a.d-b.d)
+      .map(x=>x.h);
+  }
+  function spawnTenebelves(){
+    removeTenebelves();
+    const count = nightCreatureCount();
+    const candidates = centerHexes().filter(h=>!h.unit && !h.hut);
+    for(let i=0;i<count && i<candidates.length;i++){
+      candidates[i].tenebelves = true;
+    }
+  }
+  function removeTenebelves(){ state.board.forEach(h=>h.tenebelves=false); }
+  function moveNightCreaturesHost(){
+    if(!state.isNight) return;
+    const zombies = state.board.filter(h=>h.tenebelves);
+    for(const hex of zombies){
+      if(!hex.tenebelves) continue;
+      const free = neighbors(hex).filter(n=>!n.tenebelves && !n.unit && !n.hut);
+      if(free.length){
+        const target = free[rand(free.length)];
+        hex.tenebelves = false;
+        target.tenebelves = true;
+      }
+    }
+    attackWithTenebelves();
+  }
+  function attackWithTenebelves(){
+    if(!state.isNight) return;
+    const zombies = state.board.filter(h=>h.tenebelves);
+    zombies.forEach(hex=>{
+      const targets = neighbors(hex).filter(n=>n.unit && playerById(n.unit.ownerId).species.id!=='anthro'); // non attaccano capanne né Antropofiere
+      if(!targets.length) return;
+      const t = targets[rand(targets.length)];
+      const defender = t.unit;
+      const defPlayer = playerById(defender.ownerId);
+      const zRoll = rollDice(Math.max(1, defender.level));
+      const dRoll = rollDice(Math.max(1, defender.level));
+      if(zRoll.sum > dRoll.sum){
+        announce(`${NIGHT_CREATURE_ICON} Una creatura notturna vince il duello contro <b>${defPlayer.name}</b> (${zRoll.rolls.join(' + ')}=${zRoll.sum} contro ${dRoll.rolls.join(' + ')}=${dRoll.sum}) e la creatura muore.`);
+        t.unit = null;
+      } else {
+        announce(`${NIGHT_CREATURE_ICON} Una creatura di <b>${defPlayer.name}</b> sopravvive alla creatura notturna (${dRoll.rolls.join(' + ')}=${dRoll.sum} contro ${zRoll.rolls.join(' + ')}=${zRoll.sum}).`);
+        hex.tenebelves = false;
+      }
+    });
+  }
+  function advanceDayNightHost(){
+    const wasNight = state.isNight;
+    state.phaseTurns = (state.phaseTurns||0) + 1;
+    if(state.isNight){
+      moveNightCreaturesHost();
+      if(state.phaseTurns >= NIGHT_TURNS) toggleNight(false);
+    } else {
+      if(state.phaseTurns >= DAY_TURNS) toggleNight(true);
+    }
+    if(wasNight !== state.isNight) sfx(state.isNight ? 'night' : 'victory');
+  }
+  
+  function scheduleSpiderPoison(spiderPlayerId, targetHexId, spiderLevel, killerPlayerId){
+    if(!spiderPlayerId || !targetHexId) return;
+    state.spiderPoisonQueue = state.spiderPoisonQueue || [];
+    state.spiderPoisonQueue.push({
+      id:'poison-'+Date.now()+'-'+Math.random(),
+      spiderPlayerId,
+      targetHexId,
+      spiderLevel:Math.max(1, spiderLevel||1),
+      killerPlayerId,
+      readyTurn:(state.turn||0)+1,
+      used:false
+    });
+  }
+  function pendingPoisonForCurrentPlayer(){
+    const cp=currentPlayer();
+    if(!cp) return null;
+    // La finestra del veleno appare solo dal turno globale seguente.
+    return (state.spiderPoisonQueue||[]).find(p=>!p.used && p.spiderPlayerId===cp.id && (state.turn >= (p.readyTurn||0)));
+  }
+  function showPoisonModalIfNeeded(){
+    const poison = pendingPoisonForCurrentPlayer();
+    if(!poison || !isMyTurn()) return;
+    if(el('poisonModal').classList.contains('show')) return;
+    const target = state.board.find(h=>h.id===poison.targetHexId);
+    if(!target || !target.unit){
+      if(network.role==='host'){ poison.used=true; syncState(); }
+      return;
+    }
+    const targetPlayer = playerById(target.unit.ownerId);
+    state.activePoison = poison.id;
+    el('poisonBody').innerHTML = `È il turno globale seguente. Il tuo Aracnide può usare il veleno contro la creatura di <b>${targetPlayer.name}</b> che lo ha ucciso. Premi <b>TIRA VELENO</b>: il veleno tira tanti dadi quanto il livello dell’Aracnide, fino a 3 dadi. Ogni dado vale da 1 a 3 e i punti si sommano.`;
+    const row = el('poisonDiceRow');
+    if(row){
+      row.innerHTML = Array.from({length:Math.min(3, Math.max(1, poison.spiderLevel||1))}).map(()=>'<div class="poison-die">🎲</div>').join('');
+    }
+    if(el('poisonTotal')) el('poisonTotal').textContent='Totale veleno: —';
+    if(el('poisonDefTotal')) el('poisonDefTotal').textContent='Resistenza nemica: —';
+    if(el('poisonResult')) el('poisonResult').textContent='Premi TIRA VELENO.';
+    if(el('poisonModal')) delete el('poisonModal').dataset.poisonResultNonce;
+    if(el('skipPoisonBtn')) el('skipPoisonBtn').disabled=false;
+    if(el('closePoisonBtn')) el('closePoisonBtn').textContent='Chiudi';
+    if(el('usePoisonBtn')){ el('usePoisonBtn').disabled=false; el('usePoisonBtn').textContent='TIRA VELENO'; }
+    el('poisonModal').classList.add('show');
+  }
+
+  function renderPoisonResultInModal(result){
+    if(!result) return;
+    const row = el('poisonDiceRow');
+    if(row){
+      row.innerHTML = (result.poisonRoll?.rolls || []).map(n=>`<div class="poison-die">${n}</div>`).join('');
+    }
+    if(el('poisonTotal')) el('poisonTotal').textContent = `Totale veleno: ${(result.poisonRoll?.rolls || []).join(' + ')} = ${result.poisonRoll?.sum ?? '—'}`;
+    if(el('poisonDefTotal')) el('poisonDefTotal').textContent = `Resistenza nemica: ${(result.defRoll?.rolls || []).join(' + ')} = ${result.defRoll?.sum ?? '—'}`;
+    if(el('poisonResult')) el('poisonResult').innerHTML = result.result || '';
+    if(el('usePoisonBtn')){ el('usePoisonBtn').disabled = true; el('usePoisonBtn').textContent = 'VELENO USATO'; }
+    if(el('skipPoisonBtn')) el('skipPoisonBtn').disabled = true;
+    if(el('closePoisonBtn')) el('closePoisonBtn').textContent = 'Chiudi';
+    el('poisonModal').classList.add('show');
+  }
+
+  function showLastPoisonResultIfOpen(){
+    const result = state.lastPoisonResult;
+    if(!result) return;
+    const modal = el('poisonModal');
+    if(!modal || !modal.classList.contains('show')) return;
+    if(modal.dataset.poisonResultNonce === String(result.nonce)) return;
+    modal.dataset.poisonResultNonce = String(result.nonce);
+    renderPoisonResultInModal(result);
+  }
+
+  function animatePoisonDiceAndSend(){
+    sfx('dice');
+    const poison = pendingPoisonForCurrentPlayer();
+    if(!poison) return;
+    const btn = el('usePoisonBtn');
+    if(btn) btn.disabled = true;
+    const dice = Array.from(document.querySelectorAll('#poisonDiceRow .poison-die'));
+    dice.forEach(d=>d.classList.add('rolling'));
+    let ticks=0;
+    const timer=setInterval(()=>{
+      dice.forEach(d=>d.textContent=diceFace(1+rand(6)));
+      ticks++;
+      if(ticks>=12){
+        clearInterval(timer);
+        dice.forEach(d=>d.classList.remove('rolling'));
+        if(network.role==='host'){
+          useSpiderPoisonHost();
+        } else {
+          sendAction('usePoison');
+        }
+      }
+    },90);
+  }
+  function useSpiderPoisonHost(){
+    const poison = pendingPoisonForCurrentPlayer();
+    if(!poison){ syncState(); return; }
+    const target = state.board.find(h=>h.id===poison.targetHexId);
+    const spiderPlayer = playerById(poison.spiderPlayerId);
+    if(!target || !target.unit){
+      poison.used=true;
+      state.activePoison=null;
+      state.lastPoisonResult={
+        poisonId:poison.id,
+        poisonRoll:{rolls:[],sum:0},
+        defRoll:{rolls:[],sum:0},
+        result:`Il veleno degli <b>Aracnidi</b> non trova più la creatura da colpire.`,
+        nonce:Date.now()
+      };
+      renderPoisonResultInModal(state.lastPoisonResult);
+      announce(`Il veleno degli <b>Aracnidi</b> non trova più la creatura da colpire.`);
+      syncState();
+      return;
+    }
+    const targetLevel = Math.max(1, target.unit.level);
+    const targetPlayer = playerById(target.unit.ownerId);
+    const poisonDice = Math.min(3, Math.max(1, poison.spiderLevel||1));
+    const poisonRoll = rollPoisonDice(poisonDice);
+    const defRoll = rollDice(targetLevel);
+    let result;
+    if(poisonRoll.sum > defRoll.sum){
+      result = `Il veleno degli Aracnidi vince: la creatura nemica muore.`;
+      target.unit = null;
+      announce(`Il veleno di <b>${spiderPlayer.name}</b> elimina una creatura di <b>${targetPlayer.name}</b>.`);
+    } else {
+      result = `La creatura resiste al veleno.`;
+      announce(`Una creatura di <b>${targetPlayer.name}</b> resiste al veleno degli <b>Aracnidi</b>.`);
+    }
+    poison.used=true;
+    state.activePoison=null;
+    state.lastPoisonResult={
+      poisonId:poison.id,
+      spiderPlayerId:poison.spiderPlayerId,
+      targetPlayerId:targetPlayer?.id,
+      poisonRoll,
+      defRoll,
+      result:`${result}<br><b>Veleno:</b> ${poisonRoll.rolls.join(' + ')} = ${poisonRoll.sum}<br><b>Resistenza:</b> ${defRoll.rolls.join(' + ')} = ${defRoll.sum}`,
+      nonce:Date.now()
+    };
+    // Mostra i punti nella stessa schermata del veleno, senza aprire il popup Duello.
+    renderPoisonResultInModal(state.lastPoisonResult);
+    updateDayNight(); renderDayNight(); endTurnHost(true);
+  }
+  function skipSpiderPoisonHost(){
+    const poison = pendingPoisonForCurrentPlayer();
+    if(poison){
+      poison.used=true;
+      state.activePoison=null;
+      announce(`<b>${currentPlayer().name}</b> decide di non usare il veleno degli Aracnidi.`);
+      if(el('poisonModal')) el('poisonModal').classList.remove('show');
+      endTurnHost(true);
+      return;
+    }
+    if(el('poisonModal')) el('poisonModal').classList.remove('show');
+    syncState();
+  }
+function toggleNight(forceNight=null){
+    const goingNight = forceNight===null ? !state.isNight : !!forceNight;
+    state.isNight = goingNight;
+    state.phaseTurns = 0;
+    if(state.isNight){
+      spawnTenebelves();
+      announce('Scende la <b>notte</b>: nascono le creature notturne zombie al centro della mappa.');
+    } else {
+      removeTenebelves();
+      announce('Arriva il <b>giorno</b>: le creature notturne scompaiono.');
+    }
+  }
+  function nightCreatureCount(){
+    if(state.mapSize==='small') return 3;
+    if(state.mapSize==='large') return 5;
+    return 4;
+  }
+  function centerHexes(){
+    const cr=(state.rows-1)/2, cc=(state.cols-1)/2;
+    return state.board
+      .map(h=>({h,d:Math.abs(h.r-cr)+Math.abs(h.c-cc)}))
+      .sort((a,b)=>a.d-b.d)
+      .map(x=>x.h);
+  }
+  function spawnTenebelves(){
+    removeTenebelves();
+    const count = nightCreatureCount();
+    const candidates = centerHexes().filter(h=>!h.unit && !h.hut);
+    for(let i=0;i<count && i<candidates.length;i++){
+      candidates[i].tenebelves = true;
+    }
+  }
+  function removeTenebelves(){ state.board.forEach(h=>h.tenebelves=false); }
+  function moveNightCreaturesHost(){
+    if(!state.isNight) return;
+    const zombies = state.board.filter(h=>h.tenebelves);
+    for(const hex of zombies){
+      if(!hex.tenebelves) continue;
+      const free = neighbors(hex).filter(n=>!n.tenebelves && !n.unit && !n.hut);
+      if(free.length){
+        const target = free[rand(free.length)];
+        hex.tenebelves = false;
+        target.tenebelves = true;
+      }
+    }
+    attackWithTenebelves();
+  }
+  function attackWithTenebelves(){
+    if(!state.isNight) return;
+    const zombies = state.board.filter(h=>h.tenebelves);
+    zombies.forEach(hex=>{
+      // Non attaccano capanne. Le Antropofiere non vengono attaccate di notte.
+      const targets = neighbors(hex).filter(n=>n.unit && playerById(n.unit.ownerId).species.id!=='anthro');
+      if(!targets.length) return;
+      const t = targets[rand(targets.length)];
+      const defender = t.unit;
+      const defPlayer = playerById(defender.ownerId);
+      const zRoll = rollDice(Math.max(1, defender.level));
+      const dRoll = rollDice(Math.max(1, defender.level));
+      if(zRoll.sum > dRoll.sum){
+        announce(`${NIGHT_CREATURE_ICON} Una creatura notturna vince contro <b>${defPlayer.name}</b> (${zRoll.rolls.join(' + ')}=${zRoll.sum} contro ${dRoll.rolls.join(' + ')}=${dRoll.sum}) e la creatura muore.`);
+        t.unit = null;
+      } else {
+        announce(`${NIGHT_CREATURE_ICON} Una creatura di <b>${defPlayer.name}</b> sopravvive allo zombie (${dRoll.rolls.join(' + ')}=${dRoll.sum} contro ${zRoll.rolls.join(' + ')}=${zRoll.sum}).`);
+        hex.tenebelves = false;
+      }
+    });
+  }
+  function advanceDayNightHost(){
+    state.phaseTurns = (state.phaseTurns||0) + 1;
+    if(state.isNight){
+      moveNightCreaturesHost();
+      if(state.phaseTurns >= NIGHT_TURNS) toggleNight(false);
+    } else {
+      if(state.phaseTurns >= DAY_TURNS) toggleNight(true);
+    }
+  }
+  function decayInfections(){
+    state.board.forEach(h=>{
+      if(!h.unit || !h.unit.controlledBy || h.unit.controlledBy===h.unit.ownerId) return;
+      if((state.actionSerial||0) <= (h.unit.infectionSkipDecayUntil||0)) return;
+      h.unit.infectionTurns = (h.unit.infectionTurns||0) - 1;
+      if(h.unit.infectionTurns<=0){
+        const original = playerById(h.unit.ownerId);
+        h.unit.controlledBy=null;
+        h.unit.infectionTurns=0;
+        h.unit.infectionSkipDecayUntil=null;
+        h.unit.moved=false;
+        h.unit.acted=false;
+        h.territory=h.unit.ownerId;
+        announce(`Il contagio termina: una creatura torna sotto il controllo di <b>${original?original.name:'proprietario originale'}</b>.`);
+      }
+    });
+  }
+  function decayStatusEffects(){ state.pendingPoisons=state.pendingPoisons.filter(p=>{ const hex=state.board.find(h=>h.id===p.targetHexId); if(!hex || !hex.unit) return false; p.turns--; if(p.turns<=0){ const save=rollDice(hex.unit.level); if(save.sum < 4 + hex.unit.level){ announce(`Il <b>veleno degli Aracnidi</b> uccide una creatura.`); hex.unit=null; } else announce(`Una creatura supera il tiro salvezza contro il veleno.`); return false; } return true; }); }
+  function cleanupEliminations(){ state.players.forEach(p=>{ const hasHut=state.board.some(h=>h.hut&&h.hut.ownerId===p.id); const hasUnit=state.board.some(h=>h.unit&&h.unit.ownerId===p.id); p.eliminated=!(hasHut||hasUnit); }); }
+
+  function showEndgameModal(){
+    if(!state.winner) return;
+    const mine = myPlayer();
+    const isVictory = !!mine && mine.id===state.winner.id;
+    const card = el('endgameCard');
+    const badge = el('endgameBadge');
+    const title = el('endgameTitle');
+    const textNode = el('winnerText');
+    const stats = el('endgameStats');
+    card.classList.remove('victory','defeat');
+    card.classList.add(isVictory?'victory':'defeat');
+    badge.textContent = isVictory ? 'VITTORIA' : 'SCONFITTA';
+    title.textContent = isVictory ? 'Hai conquistato il regno!' : 'Hai perso la partita';
+    textNode.innerHTML = isVictory
+      ? `Il tabellone è tutto del colore di <b>${state.winner.name}</b>. Hai vinto la partita.`
+      : `<b>${state.winner.name}</b> ha conquistato il regno. Prima di tornare alla schermata iniziale vedi qui il risultato finale.`;
+    const myHuts = mine ? state.board.filter(h=>h.hut && h.hut.ownerId===mine.id).length : 0;
+    const myUnits = mine ? state.board.filter(h=>h.unit && effectiveOwner(h.unit)===mine.id).length : 0;
+    const myGems = mine ? (mine.gems||0) : 0;
+    stats.innerHTML = `
+      <div class="endgame-stat">Turni giocati<b>${state.turn||0}</b></div>
+      <div class="endgame-stat">Le tue capanne<b>${myHuts}</b></div>
+      <div class="endgame-stat">Le tue pedine<b>${myUnits}</b></div>
+      <div class="endgame-stat">Le tue gemme<b>${myGems}</b></div>`;
+    el('winnerModal').classList.add('show');
+  }
+  function checkWinner(){ const alive=alivePlayers(); if(alive.length===1){ state.winner=alive[0]; showEndgameModal(); } }
+  function nextPlayer(){ let tries=0; do{ state.currentPlayerIndex=(state.currentPlayerIndex+1)%state.players.length; tries++; } while(currentPlayer().eliminated && tries<20); }
+  
+function endTurnHost(auto=false){
+  sfx('turn');
+  if(!state.gameStarted || state.winner) return;
+  forceFinishStaleDuelHost();
+  if(state.pendingDuel) return; // non cambiare turno mentre il duello è ancora aperto
+
+  state.actionSerial = (state.actionSerial || 0) + 1;
+  decayInfections();
+
+  const cp=currentPlayer();
+  if(!cp) return;
+  cp.personalTurns = (cp.personalTurns||0) + 1;
+  if(cp.personalTurns % 3 === 0){
+    const hutsCount = state.board.filter(h=>h.hut && h.hut.ownerId===cp.id).length;
+    const gemsEarned = Math.max(0, hutsCount);
+    cp.gems = (cp.gems||0) + gemsEarned;
+    announce(`<b>${cp.name}</b> riceve <b>${gemsEarned} gemma${gemsEarned===1?'':'e'}</b> per le sue <b>${hutsCount} capanne</b> al terzo giro personale.`);
+  }
+
+  // Prepara solo il giocatore successivo: il giocatore che ha appena agito
+  // non viene riattivato subito, così non può sfruttare bug per turni infiniti.
+  nextPlayer();
+  const next=currentPlayer();
+  resetUnitsForPlayer(next);
+
+  if(state.currentPlayerIndex===0){
+    state.turn++;
+    state.cycle++;
+    advanceDayNightHost();
+    decayStatusEffects();
+  }
+  state.selectedHex=null;
+  state.mode=null;
+  cleanupEliminations();
+  normalizeCurrentTurnHost('Cambio turno');
+  checkWinner();
+  if(!state.winner) announce(`${auto?'Turno automatico:':''} ora gioca <b>${currentPlayer().name}</b> (${currentPlayer().species.name}).`);
+  syncState();
+}
+
+
+  function hexPoints(cx,cy,s){ const pts=[]; for(let i=0;i<6;i++){ const ang=Math.PI/180*(60*i-30); pts.push((cx+s*Math.cos(ang)).toFixed(2)+','+(cy+s*Math.sin(ang)).toFixed(2)); } return pts.join(' '); }
+  function territoryFill(hex){ if(hex.tenebelves) return 'rgba(32,32,48,.9)'; if(hex.territory){ const p=playerById(hex.territory); return p ? p.species.territory : 'rgba(255,255,255,.03)'; } return 'rgba(255,255,255,.03)'; }
+  function getActionMarks(target){
+    if(!state.selectedHex || !state.gameStarted || !isMyTurn()) return '';
+    const src = state.board.find(h=>h.id===state.selectedHex.id) || state.selectedHex;
+    const cp=currentPlayer();
+    if(!src || !cp) return '';
+    if((state.mode==='spawnGem' || state.mode==='spawnChoose' || state.mode==='spawn') && src.hut && src.hut.ownerId===cp.id){
+      if(neighbors(src).some(n=>n.id===target.id) && !target.unit && !target.hut && !target.tenebelves) return 'action';
+    }
+    if(state.mode==='merge' && src.unit && ownsUnit(src.unit,cp)){
+      if(neighbors(src).some(n=>n.id===target.id) && target.unit && ownsUnit(target.unit,cp) && src.unit.level===target.unit.level && src.unit.level<3) return 'action';
+    }
+    if(src.unit && ownsUnit(src.unit,cp)){
+      if(!src.unit.moved && !src.unit.acted && reachable(src, moveDistance(src.unit, cp)).some(h=>h.id===target.id)) return 'reachable';
+      if(canAttack(src,target,cp)) return 'attackable';
+    }
+    return '';
+  }
+  let lastAnimationNonceShown = null; let lastMergeAuraDirectNonce = null; let lastMergeAnimationNonceShown = null; let lastCombatNonceShown = null;
+  function animateMove(from,to,emoji){ if(!from || !to) return; const text=document.createElementNS(ns,'text'); text.setAttribute('x',from._x); text.setAttribute('y',from._y+10); text.setAttribute('text-anchor','middle'); text.setAttribute('font-size','29'); text.textContent=emoji; text.setAttribute('class','piece-anim'); svg.appendChild(text); requestAnimationFrame(()=>{ text.style.transition='transform .5s ease, opacity .5s ease'; text.style.transform=`translate(${to._x-from._x}px, ${to._y-from._y}px)`; text.style.opacity='0'; }); setTimeout(()=>text.remove(),650); }
+  function animateMergeAura(hex){
+    if(!hex || typeof hex._x === 'undefined') return;
+    const g=document.createElementNS(ns,'g');
+    g.setAttribute('pointer-events','none');
+    g.setAttribute('opacity','1');
+
+    const ring1=document.createElementNS(ns,'circle');
+    ring1.setAttribute('cx',hex._x);
+    ring1.setAttribute('cy',hex._y);
+    ring1.setAttribute('r','10');
+    ring1.setAttribute('fill','rgba(255,216,108,.28)');
+    ring1.setAttribute('stroke','#ffd86c');
+    ring1.setAttribute('stroke-width','5');
+
+    const animR=document.createElementNS(ns,'animate');
+    animR.setAttribute('attributeName','r');
+    animR.setAttribute('from','10');
+    animR.setAttribute('to','58');
+    animR.setAttribute('dur','1s');
+    animR.setAttribute('fill','freeze');
+
+    const animO=document.createElementNS(ns,'animate');
+    animO.setAttribute('attributeName','opacity');
+    animO.setAttribute('from','1');
+    animO.setAttribute('to','0');
+    animO.setAttribute('dur','1s');
+    animO.setAttribute('fill','freeze');
+
+    ring1.appendChild(animR);
+    ring1.appendChild(animO);
+
+    const burst=document.createElementNS(ns,'text');
+    burst.setAttribute('x',hex._x);
+    burst.setAttribute('y',hex._y+10);
+    burst.setAttribute('text-anchor','middle');
+    burst.setAttribute('font-size','38');
+    burst.textContent='✨';
+
+    const animTO=document.createElementNS(ns,'animate');
+    animTO.setAttribute('attributeName','opacity');
+    animTO.setAttribute('from','1');
+    animTO.setAttribute('to','0');
+    animTO.setAttribute('dur','1s');
+    animTO.setAttribute('fill','freeze');
+    burst.appendChild(animTO);
+
+    g.appendChild(ring1);
+    g.appendChild(burst);
+    svg.appendChild(g);
+    setTimeout(()=>g.remove(),1050);
+  }
+
+  function playMergeAuraDirect(hexId){
+    const hex = state.board.find(h=>h.id===hexId);
+    if(!hex) return;
+    // assicura che le coordinate SVG siano aggiornate
+    if(typeof hex._x === 'undefined' || typeof hex._y === 'undefined') drawBoard();
+    const boardArea = document.querySelector('.board-area');
+    if(!boardArea || typeof hex._x === 'undefined') return;
+    const svgRect = svg.getBoundingClientRect();
+    const areaRect = boardArea.getBoundingClientRect();
+    const scaleX = svgRect.width / Math.max(1, parseFloat(svg.getAttribute('width')));
+    const scaleY = svgRect.height / Math.max(1, parseFloat(svg.getAttribute('height')));
+    const aura = document.createElement('div');
+    aura.className = 'merge-aura-dom';
+    aura.style.left = (svgRect.left - areaRect.left + hex._x * scaleX) + 'px';
+    aura.style.top = (svgRect.top - areaRect.top + hex._y * scaleY) + 'px';
+    boardArea.appendChild(aura);
+    setTimeout(()=>aura.remove(),1050);
+  }
+  
+  function drawBoard(){ while(svg.firstChild) svg.removeChild(svg.firstChild); const size=42, w=Math.sqrt(3)*size, vSpacing=size*1.5; svg.setAttribute('width', state.cols*w+180); svg.setAttribute('height', state.rows*vSpacing+180); state.board.forEach(hex=>{ const x=90 + hex.c*w + (hex.r%2 ? w/2 : 0), y=90 + hex.r*vSpacing; hex._x=x; hex._y=y; const g=document.createElementNS(ns,'g'); g.setAttribute('class','hex'); if(state.selectedHex && state.selectedHex.id===hex.id) g.classList.add('selected'); const marks=getActionMarks(hex); if(marks) g.classList.add(marks); const poly=document.createElementNS(ns,'polygon'); poly.setAttribute('points', hexPoints(x,y,size)); poly.setAttribute('fill', territoryFill(hex)); poly.setAttribute('stroke','rgba(255,255,255,.16)'); poly.setAttribute('stroke-width','2'); g.appendChild(poly); const coords=document.createElementNS(ns,'text'); coords.setAttribute('x',x); coords.setAttribute('y',y-8); coords.setAttribute('text-anchor','middle'); coords.setAttribute('font-size','11'); coords.setAttribute('fill','rgba(255,255,255,.45)'); coords.textContent=`${hex.r+1}:${hex.c+1}`; g.appendChild(coords); if(hex.hut){ const owner=playerById(hex.hut.ownerId); const t=document.createElementNS(ns,'text'); t.setAttribute('x',x); t.setAttribute('y',y+12); t.setAttribute('text-anchor','middle'); t.setAttribute('font-size','30'); t.textContent='🏠'; g.appendChild(t); const n=document.createElementNS(ns,'text'); n.setAttribute('x',x); n.setAttribute('y',y+38); n.setAttribute('text-anchor','middle'); n.setAttribute('font-size','12'); n.setAttribute('fill', owner.species.color); n.textContent=owner.name; g.appendChild(n); } if(hex.unit){ const own=playerById(effectiveOwner(hex.unit)); const real=playerById(hex.unit.ownerId); const t=document.createElementNS(ns,'text'); t.setAttribute('x',x); t.setAttribute('y',y+10); t.setAttribute('text-anchor','middle'); t.setAttribute('font-size','29'); if(real.species.id==='humans'){
+          t.textContent='🧍';
+          g.appendChild(t);
+          const sword=document.createElementNS(ns,'text');
+          sword.setAttribute('x',x+16);
+          sword.setAttribute('y',y+4);
+          sword.setAttribute('text-anchor','middle');
+          sword.setAttribute('font-size','22');
+          sword.textContent='⚔️';
+          g.appendChild(sword);
+        } else {
+          t.textContent=real.species.icon;
+          g.appendChild(t);
+        } const tag=document.createElementNS(ns,'text'); tag.setAttribute('x',x); tag.setAttribute('y',y+34); tag.setAttribute('text-anchor','middle'); tag.setAttribute('font-size','12'); tag.setAttribute('fill', own.species.color); tag.textContent=`${real.name} · Lv${hex.unit.level}${hex.unit.flying?' ✦':''}${hex.unit.controlledBy&&hex.unit.controlledBy!==hex.unit.ownerId?' ☣':''}`; g.appendChild(tag); } if(hex.tenebelves){ const t=document.createElementNS(ns,'text'); t.setAttribute('x',x); t.setAttribute('y',y+10); t.setAttribute('text-anchor','middle'); t.setAttribute('font-size','29'); t.textContent=NIGHT_CREATURE_ICON; g.appendChild(t); } g.addEventListener('click',()=>{ if(!state.gameStarted || state.winner) return; sendAction('select',{hexId:hex.id}); }); svg.appendChild(g); });
+    if(state.lastAnimation && state.lastAnimation.nonce !== lastAnimationNonceShown){ lastAnimationNonceShown = state.lastAnimation.nonce; const from=state.board.find(h=>h.id===state.lastAnimation.fromId); const to=state.board.find(h=>h.id===state.lastAnimation.toId); animateMove(from,to,state.lastAnimation.emoji); }
+    if(state.mergeAnimation && state.mergeAnimation.nonce !== lastMergeAnimationNonceShown){
+      lastMergeAnimationNonceShown = state.mergeAnimation.nonce;
+      const mh = state.board.find(h=>h.id===state.mergeAnimation.hexId);
+      animateMergeAura(mh);
+    }
+  }
+  function updatePlayersUI(){ const box=el('playersList'); box.innerHTML=''; state.players.forEach((p,idx)=>{ const units=state.board.filter(h=>h.unit && h.unit.ownerId===p.id).length; const huts=state.board.filter(h=>h.hut && h.hut.ownerId===p.id).length; const mine = p.peerId===network.myPeerId ? '<span class="badge">Tu</span>' : ''; const row=document.createElement('div'); row.className='playerRow'; row.innerHTML=`<div class="playerMain"><div class="dot" style="background:${p.species.color}"></div><div><div style="font-weight:800">${p.species.icon} ${p.name}</div><div class="small">${p.species.name} · Gemme ${p.gems||0} · Capanne ${huts} · Unità ${units} · Giri ${p.personalTurns||0}</div></div></div><div>${mine}${idx===state.currentPlayerIndex && !p.eliminated ? '<span class="badge">Turno</span>' : ''}${p.eliminated ? '<span class="badge" style="background:rgba(248,113,113,.18);color:#ffd2d2">Eliminato</span>' : ''}</div>`; box.appendChild(row); }); }
+  function updateHeader(){ el('turnCounter').textContent=state.turn; el('phaseLabel').textContent=state.isNight?`Notte ${state.phaseTurns||0}/${NIGHT_TURNS}`:`Giorno ${state.phaseTurns||0}/${DAY_TURNS}`; el('liveRoomCode').textContent=state.roomCode; el('livePlayerName').textContent=`Nome: ${state.localPlayerName||'—'}`; el('liveRole').textContent=`Ruolo: ${network.role==='host'?'Host':'Giocatore'}`; const mine=myPlayer(); if(el('myGemCounter')) el('myGemCounter').textContent = mine ? (mine.gems||0) : 0; if(!state.gameStarted){ el('currentBanner').textContent='Aspetta l’avvio della partita.'; el('turnInfo').innerHTML=''; } else { const p=currentPlayer(); el('currentBanner').innerHTML=`<b>${p.name}</b> — ${p.species.icon} ${p.species.name}. ${p.species.rule} ${isMyTurn() ? 'È il tuo turno.' : 'Aspetta il turno giusto.'}`; el('turnInfo').innerHTML=`<span class="pill"><span class="dot" style="background:${p.species.color}"></span><b>Turno:</b> ${p.name}</span><span class="pill"><b>Fazione:</b> ${p.species.name}</span><span class="pill"><b>Ordine:</b> ${state.currentPlayerIndex+1}/${state.players.length}</span><span class="pill"><b>Fase:</b> ${state.isNight?'Notte':'Giorno'}</span><span class="pill"><b>Le tue gemme:</b> ${mine?(mine.gems||0):0}</span>`; } el('legend').innerHTML = CREATURES.map(c=>`<span class="pill"><span class="dot" style="background:${c.color}"></span>${c.icon} ${c.name}</span>`).join(''); const mineActive = mine && !mine.eliminated; const canAct=state.gameStarted && !state.winner && mineActive && isMyTurn() && !state.pendingDuel; ['spawnBtn','spawnGemBtn','mergeBtn','newHutBtn','humanSkillBtn','endTurnBtn'].forEach(id=>{ const node=el(id); if(node) node.disabled=!canAct; }); if(el('spawnBtn')) el('spawnBtn').textContent = canAct ? '+ Creatura (1 Gemma)' : 'Spawna creatura'; if(el('newHutBtn')) el('newHutBtn').textContent = canAct ? 'Nuova capanna (3 Gemme)' : 'Nuova capanna'; }
+  function renderFromState(){ if(state.gameStarted){ el('startScreen').classList.add('hidden'); el('app').classList.add('show'); startKingdomMusic(); } drawBoard(); updatePlayersUI(); updateHeader(); el('log').innerHTML = state.logs.map(x=>`<div class="entry">${x}</div>`).join('');
+    if(state.mergeAnimation && state.mergeAnimation.nonce !== lastMergeAuraDirectNonce){
+      lastMergeAuraDirectNonce = state.mergeAnimation.nonce;
+      setTimeout(()=>playMergeAuraDirect(state.mergeAnimation.hexId), 60);
+    } if(state.combatInfo && (state.combatInfo.nonce !== lastCombatNonceShown || (state.combatInfo.interactive && el('combatModal').classList.contains('show')))){ lastCombatNonceShown = state.combatInfo.nonce; showCombat(state.combatInfo.atk, state.combatInfo.def, state.combatInfo.res); } showLastPoisonResultIfOpen(); showPoisonModalIfNeeded(); if(state.winner){ showEndgameModal(); } }
+
+  el('continueNameBtn').addEventListener('click', ()=>{ const name=sanitizeName(el('myNameInput').value); if(!name){ alert('Scrivi prima il tuo nome.'); return; } state.localPlayerName=name; el('helloName').textContent=name; showStep('stepMode'); });
+  el('instructionsBtn').addEventListener('click', ()=>{ el('instructionsModal').classList.add('show'); });
+  el('closeInstructionsBtn').addEventListener('click', ()=>{ el('instructionsModal').classList.remove('show'); showStep('stepName'); });
+  el('backToNameBtn').addEventListener('click', ()=>showStep('stepName')); el('chooseCreate').addEventListener('click', ()=>showStep('stepCreate')); el('chooseJoin').addEventListener('click', ()=>showStep('stepJoin')); el('backToModeFromCreate').addEventListener('click', ()=>showStep('stepMode')); el('backToModeFromJoin').addEventListener('click', ()=>showStep('stepMode')); el('backToModeFromLobby').addEventListener('click', ()=>showStep('stepMode'));
+  el('createRoomBtn').addEventListener('click', createRoom); el('joinRoomBtn').addEventListener('click', joinRoom); el('copyRoomCodeBtn').addEventListener('click', async ()=>{ try{ await navigator.clipboard.writeText(state.roomCode); alert('Codice copiato.'); }catch{ alert('Copia non disponibile su questo dispositivo.'); } }); el('startMatchBtn').addEventListener('click', ()=>sendAction('startGame'));
+  el('spawnBtn').addEventListener('click', ()=>sendAction('spawnMode')); if(el('spawnGemBtn')) el('spawnGemBtn').addEventListener('click', ()=>sendAction('spawnGemMode')); el('mergeBtn').addEventListener('click', ()=>sendAction('mergeMode')); if(el('newHutBtn')) el('newHutBtn').addEventListener('click', ()=>sendAction('newHut')); el('humanSkillBtn').addEventListener('click', ()=>sendAction('humanSkill')); el('endTurnBtn').addEventListener('click', ()=>sendAction('endTurn')); el('closeCombat').addEventListener('click', closeCombat); if(el('usePoisonBtn')) el('usePoisonBtn').addEventListener('click', animatePoisonDiceAndSend); if(el('skipPoisonBtn')) el('skipPoisonBtn').addEventListener('click', ()=>sendAction('skipPoison'));
+  if(el('closePoisonBtn')) el('closePoisonBtn').addEventListener('click', ()=>{ el('poisonModal').classList.remove('show'); }); if(el('rollDuelBtn')) el('rollDuelBtn').addEventListener('click', animateDuelRoll); setupAudioSettingsPanel(); el('playAgain').addEventListener('click', ()=>{ stopKingdomMusic(); location.reload(); }); if(el('backToLobbyBtn')) el('backToLobbyBtn').addEventListener('click', ()=>{ stopKingdomMusic(); location.reload(); }); el('joinCodeInput').addEventListener('input', e=>{ e.target.value=e.target.value.replace(/\D/g,'').slice(0,4); });
+  setInterval(turnWatchdogHost, 3000);
+})();
+</script>
+</body>
+</html>
